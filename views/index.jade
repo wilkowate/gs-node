@@ -1,0 +1,39 @@
+extends layout
+
+block content
+
+  include toolbar.pug
+  
+    
+  #mainNav.panel.layers
+    include layers.pug
+  
+  include map.jade
+    
+  #content_tree.panel.tree
+   .block   
+  
+  include contentTabs.jade
+    
+
+    
+
+  script(type="text/javascript").
+   $(document).ready(function() {
+    $( function() {$( "#content_tabs" ).tabs()} )   
+   })
+  
+   console.log('You are awesome')
+   
+
+
+   $(function() {
+   $('#content_tree').jstree({
+     'core':{
+         'data' : [
+        { "text" : "Root node", "children" : [
+            { "text" : "Child node 1" },
+           { "text" : "Child node 2" }  ]
+   }   ]   }   })   })
+
+

@@ -1,0 +1,41 @@
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: #00B7FF;
+}
+
+div.panel {
+    overflow: auto;
+    border: 1px;
+    border-style: solid;
+    border-color: #ccc;
+}
+
+div.map {
+    float: right;
+    width: 78%;
+    heigth: 50%;
+}
+
+div.tabs {
+    float: right;
+    width: 78%;
+    heigth: 50%;
+}
+
+div.layers {
+    resize: both;
+    float: left;
+    width: 20%;
+    heigth: 50%;
+}
+
+div.tree {
+    resize: both;
+    float: left;
+    width: 20%;
+    heigth: 50%;
+}
