@@ -1,7 +1,18 @@
 doctype html
 html
-  head
+    head
     title= title
     link(rel='stylesheet', href='/stylesheets/style.css')
-  body
+    link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css')
+    link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css')
+    link(rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css")
+    link(rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css")
+    
+    script(src='http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js')
+    script(type='text/javascript' src="https://cdnjs.cloudflare.com/ajax/libs/ol3/3.15.1/ol.js")
+    script(type='text/javascript' src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/jstree.min.js")
+    script(type='text/javascript' src="https://code.jquery.com/ui/1.12.1/jquery-ui.js")
+    script(src="/javascripts/main.js")
+    script(src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous")
+    body
     block content
