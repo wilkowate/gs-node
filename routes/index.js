@@ -3,7 +3,12 @@ var router = express.Router();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
+	
+	config = require("./../config");
+    db = config.database;
+
+	
+  res.render('index', { title: db.user });
 });
 
 module.exports = router;
