@@ -14,7 +14,11 @@ var express = require('express')
   
   router.get('/search',  function(req, res) {
 	  
-	  Document.get(req.params.id, function (err, document) {
+	  
+	 var iDisplayStart =req.query.iDisplayStart;
+	 var iDisplayLength =req.query.iDisplayLength;
+	  
+	  Document.get(req.params.id, iDisplayStart,iDisplayLength, function (err, document) {
 		  
 		  res.send(document);
 	    //res.render('comments/comment', {comment: document})

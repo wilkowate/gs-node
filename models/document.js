@@ -18,13 +18,13 @@ function Document(id){
 /**
  * 
  */
-exports.get = function(id, done) {
+exports.get = function(id,iDisplayStart,iDisplayLength, done) {
 	var connection = db.getConnection();
 	connection.on('connect', function(err) {
 		  if (err) {
 		    console.log(err);
 		  } else {
-			  loadDocs(done,connection);
+			  loadDocs(iDisplayStart,iDisplayLength,done,connection);
 		  }
 	});
 }
@@ -34,11 +34,17 @@ exports.get = function(id, done) {
  * @param done
  * @param connection
  */
-function loadDocs(done,connection) {
+function loadDocs(iDisplayStart,iDisplayLength,done,connection) {
+	
+	console.log(iDisplayStart + ' iDisplayStart');
 	
 	var data1 = [];
 	
-	var query = "SELECT Name FROM Document ";
+	var query = "SELECT  Name FROM Document ";
+	
+	query += " ORDER BY Name OFFSET "+iDisplayStart+" ROWS FETCH NEXT "+iDisplayLength+" ROWS ONLY";
+	
+	var draw = iDisplayStart/iDisplayLength + 1;
 	
 
 	
@@ -48,7 +54,15 @@ function loadDocs(done,connection) {
 	    if (err) {
 	      console.log(err);
 	    } else {
-		    var res1 ={"docs":data1};
+	    	
+		    var res1 ={
+		    		"draw": draw,
+		    		"iTotalRecords": "200",
+		    		"iTotalDisplayRecords": "200",
+		    		"aaData":data1
+		    	  };
+		    
+		    console.log(JSON.stringify(data1));
 		    done(null,res1);
 	      console.log(rowCount + ' rows');
 	    }
