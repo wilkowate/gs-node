@@ -2,9 +2,52 @@ extends layout
 
 block content
 
+
+  <div class="row">
+  <div class="col-sm-2">.col-sm-4</div>
+  <div class="col-sm-8">
+
+  <div class="container" >
+  <a href="#demo" class="btn btn-info" data-toggle="collapse">map visibility</a>
+  <div id="demo" class="collapse in">
+
+  
+  <div class="panel panel-default">
+    <div class="panel-body">
+      include map.pug
+    </div>
+    <div class="panel-footer">Panel Footer</div>
+  </div>
+  
+  </div> </div>
+  </div>
+  </div>
+  
+  
+  <div class="row">
+  <div class="col-sm-4">
+    include categories.pug
+  </div>
+  
+  <div class="col-sm-8">
+  <a href="#demo1" class="btn btn-info" data-toggle="collapse">hide table</a>
+  <div id="demo1" class="a">
   include contentTabs.pug
+  </div>
+  </div>
+  </div>
+  
+ 
+  
+  
+  
+  
 
   script(type="text/javascript").
    $(document).ready(function() {
-   $( function() {$( "#content_tabs" ).tabs()} )   
+     $("#categories_table").treetable({ expandable: true });
+     $( function() {$( "#content_tabs" ).tabs()
+   
+   
+   } )   
    })
