@@ -2,9 +2,13 @@ extends layout
 
 block content
 
+  include toolbar.pug
 
   <div class="row">
-  <div class="col-sm-2">.col-sm-4</div>
+  <div class="col-sm-3">
+    include layers.pug
+  </div>
+  
   <div class="col-sm-8">
 
   <div class="container" >
@@ -25,7 +29,7 @@ block content
   
   
   <div class="row">
-  <div class="col-sm-4">
+  <div class="col-sm-3">
     include categories.pug
   </div>
   
@@ -39,7 +43,7 @@ block content
   
  
   
-  
+  include docSearchDlg.pug
   
   
 
