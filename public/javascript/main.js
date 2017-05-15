@@ -2,6 +2,17 @@
  * http://usejsdoc.org/
  */
  $( document ).ready(function() {
+	 
+	 $('#left_top_panel').resizable({
+		  handles: 'n, e, s, w, ne, se, sw, nw',
+		  alsoResizeReverse: '#right_top_panel'
+		});
+
+		$('#left_bottom_panel').resizable({
+		  handles: 'e',
+		  alsoResizeReverse: '#right_bottom_panel'
+		});
+		
 	 sessionStorage.setItem('selecteCatId',617);
 	 
      var oTable = $('#docs').dataTable( {
