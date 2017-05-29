@@ -52,6 +52,20 @@
 //		   });   
 //		});
 	 
+	 
+     $("#categories_table tbody").on("mousedown", "tr", function() {
+
+    	 $(".selected").not(this).removeClass("selected");
+    	 $(this).toggleClass("selected");
+    });
+     
+     $("#categories_table").on("onNodeExpand", function(){
+    	 alert('d');
+         var node = this;
+         var rowobject = node.row;
+         // do some stuff with the row or ...
+     }
+    );
 
 	 
  });

@@ -49,5 +49,37 @@ block content
 
   script(type="text/javascript").
    $(document).ready(function() {
-     $("#categories_table").treetable({ expandable: true });
+     $("#categories_table").treetable({ 
+     	onNodeExpand: function(){
+     		
+            var node = this;
+            var rowobject = node.row;
+            //var row = '</tr><tr data-tt-id="2" data-tt-parent-id="1"><td>Child</td><td>Child</td> <td>Child</td></tr>';
+            //$("#categories_table").treetable("loadBranch", node, row);
+            var parameters = { id: this.id };
+            $.get( '/categories/search',parameters, function(data) {
+            //alert('onNodeExpand'+data.categories.length);
+            var row = data.categories[0];
+             $.each(data.categories, function(i, row) {
+             //alert('row'+row.id);
+             var rowTxt = '</tr><tr data-tt-id="'+row.id+'" data-tt-parent-id="'+row.parent+'">';
+             rowTxt += '<td>'+row.label+'</td>';
+             rowTxt += '<td>Child</td>';
+             rowTxt += '<td>Child</td>';
+             
+             rowTxt += '</tr>';
+             
+    	      $("#categories_table").treetable("loadBranch", node, rowTxt);
+    	     //alert('rowTxt'+rowTxt);
+    	     var row1 = '<tr data-tt-id="1" data-tt-parent-id="617"><td>"Data Rights"</td><td>Child</td><td>Child</td></tr>';
+    	      
+    	    });
+               //var row = '</tr><tr data-tt-id="2" data-tt-parent-id="1"><td>Child</td><td>Child</td> <td>Child</td></tr>';
+               //$("#categories_table").treetable("loadBranch", node, rowTxt);
+                              
+           });   
+      },
+     expandable: true,
+     scroll: true
+      });
    })

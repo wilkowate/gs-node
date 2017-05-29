@@ -7,24 +7,25 @@ var Request = require('tedious').Request;
 
 var db = require('./database.js');
 
-var name = '';
-var fileName ='';
+var label = '';
+var nrDocs = 0;
 var id = 0;
+var parentId = 0;
 
-function Document(id){
+function Category(id){
 	this.id = id;
 }
 
 /**
  * 
  */
-exports.get = function(id,iDisplayStart,iDisplayLength, done) {
+exports.get = function(id, done) {
 	var connection = db.getConnection();
 	connection.on('connect', function(err) {
 		  if (err) {
 		    console.log(err);
 		  } else {
-			  loadDocs(iDisplayStart,iDisplayLength,done,connection);
+			  loadCats(id,done,connection);
 		  }
 	});
 }
@@ -34,21 +35,13 @@ exports.get = function(id,iDisplayStart,iDisplayLength, done) {
  * @param done
  * @param connection
  */
-function loadDocs(iDisplayStart,iDisplayLength,done,connection) {
+function loadCats(id,done,connection) {
 	
-	console.log(iDisplayStart + ' iDisplayStart');
+	console.log(id + ' cat id');
 	
-	var data1 = [];
+	var resultData = [];
 	
-	var query = "SELECT  Name FROM Document ";
-	
-	query += " ORDER BY Name OFFSET "+iDisplayStart+" ROWS FETCH NEXT "+iDisplayLength+" ROWS ONLY";
-	
-	var draw = iDisplayStart/iDisplayLength + 1;
-	
-
-	
-	 console.log(query + ' query111');
+	var query = "SELECT label, parent, category FROM Category where parent = "+id;
 	
 	  request = new Request(query, function(err, rowCount) {
 	    if (err) {
@@ -56,13 +49,11 @@ function loadDocs(iDisplayStart,iDisplayLength,done,connection) {
 	    } else {
 	    	
 		    var res1 ={
-		    		"draw": draw,
-		    		"iTotalRecords": "200",
-		    		"iTotalDisplayRecords": "200",
-		    		"aaData":data1
+		    		"categories":resultData
 		    	  };
 		    
-		    console.log(JSON.stringify(data1));
+		    console.log(JSON.stringify(resultData));
+		    
 		    done(null,res1);
 	      console.log(rowCount + ' rows');
 	    }
@@ -70,15 +61,18 @@ function loadDocs(iDisplayStart,iDisplayLength,done,connection) {
 	  });
 
 	  request.on('row', function(columns) {
-		  var doc = new Document(1);
+		  var doc = new Category(1);
 	    columns.forEach(function(column) {
 	      if (column.value === null) {
 
-	      } else {
-	       // console.log('n: '+column.metadata.colName);
-	    	  doc.name = column.value;
-	        data1.push(doc);
+	      } else if(column.metadata.colName == 'label'){
+	    	  doc.label = column.value;
+	      } else if(column.metadata.colName == 'category'){
+	    	  doc.id = column.value;
+	      } else if(column.metadata.colName == 'parent'){
+	    	  doc.parent = column.value;
 	      }
+	      resultData.push(doc);
 	    });
 	    
 
