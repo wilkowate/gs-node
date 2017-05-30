@@ -26,31 +26,24 @@
          ]
      } );
 
-//	 $(function() {
-//		    var parameters = { search: $(this).val(), id:1 };
-//		   $.get( '/documents/search',parameters, function(data) {
-//			   //alert(JSON.stringify(data));
-//			   
-//		       $.each(data.docs, function(i, todo) {
-//		    	      // add a row to the table
-//		    	      $('<tr>').append(
-//		    	        // add a cell to the row with the todo title
-//		    	        $('<td>').text(todo.name),
-//		    	        // and another cell with the due date
-//		    	        $('<td>').text(todo.id)
-//		    	      ).appendTo('#docs');
-//		    	      // and append it to the tbody element with id=table
-//		    	    });
-//		       
-//
-//		       
-//			  // $('#content_tree').jstree({
-//			//	   'core':{
-//			//		   'data' : data
-//			//	   }   
-//			//   });   
-//		   });   
-//		});
+	$(function() {
+		 var parameters = { search: $(this).val(), id:1 };
+		 $.get( '/layers/loadActiveLayers',parameters, function(data) {
+			 $.each(data.layers, function(i, layer) {
+		    	  // alert('layer'+layer.layerName);
+		    	      // add a row to the table
+		    	      $('<canvas style=" margin:5px; border:1px solid #000900;">').append(
+		    	        // add a cell to the row with the todo title
+		    	        $('<label>').text(layer.layerName),
+		    	       
+		    	        // and another cell with the due date
+		    	        $('<input>').text('dd')
+		    	      ).appendTo('#layersDiv');
+		    	      
+		    	     // alert('layer'+$('#layersDiv').html());
+		       	});
+		   });   
+	});
 	 
 	 
      $("#categories_table tbody").on("mousedown", "tr", function() {
