@@ -34,7 +34,7 @@ block content
     </div>
   
     <div id="right_bottom_panel" class="col-sm-8">
-      <a href="#demo1" class="btn btn-info" data-toggle="collapse">hide table</a>
+      
       <div id="demo1" class="a">
       include contentTabs.pug
       </div>
@@ -64,8 +64,14 @@ block content
              //alert('row'+row.id);
              var rowTxt = '</tr><tr data-tt-id="'+row.id+'" data-tt-parent-id="'+row.parent+'">';
              rowTxt += '<td>'+row.label+'</td>';
-             rowTxt += '<td>Child</td>';
-             rowTxt += '<td>Child</td>';
+             rowTxt += '<td>'+row.docsCounter+'</td>';
+             rowTxt += '<td>'+row.childDocsCounter+'</td>';
+             
+             rowTxt += '</tr>';
+              rowTxt += '</tr><tr data-tt-id="3333" data-tt-parent-id="'+row.id+'">';
+             rowTxt += '<td>..</td>';
+             rowTxt += '<td></td>';
+             rowTxt += '<td></td>';
              
              rowTxt += '</tr>';
              

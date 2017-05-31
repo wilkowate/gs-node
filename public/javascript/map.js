@@ -122,7 +122,7 @@ var canvas = document.createElement('canvas');
     	      new ol.layer.Tile({
     	            source: new ol.source.OSM()
     	        }),
-    	        vectorLayer,
+    	       // vectorLayer,
     	      new ol.layer.Tile({
     	        title: 'Global Imagery',
     	        source: new ol.source.TileWMS({
