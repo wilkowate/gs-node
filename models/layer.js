@@ -11,6 +11,7 @@ var layerName = '';
 var nrDocs = 0;
 var layerId = 0;
 var parentId = 0;
+var color = 0;
 
 function Layer(id){
 	this.layerId = layerId;
@@ -41,7 +42,8 @@ function loadLayers(id,done,connection) {
 	
 	var resultData = [];
 	
-	var query = "SELECT * FROM ActiveLayers";
+	var query = "SELECT * FROM ActiveLayers JOIN [MapLayersInfo] ON [MapLayersInfo].Layer =";
+	query += " ActiveLayers.Layer ";
 	
 	  request = new Request(query, function(err, rowCount) {
 	    if (err) {
@@ -68,10 +70,12 @@ function loadLayers(id,done,connection) {
 
 	      } else if(column.metadata.colName == 'Layer'){
 	    	  doc.layerName = column.value;
+	      } else if(column.metadata.colName == 'Color'){
+	    	  doc.color = column.value;
 	      } 
-	      resultData.push(doc);
+	      
 	    });
-	    
+	    resultData.push(doc);
 
 	  });
 	  

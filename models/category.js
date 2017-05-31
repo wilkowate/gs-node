@@ -11,6 +11,8 @@ var label = '';
 var nrDocs = 0;
 var id = 0;
 var parentId = 0;
+var docsCounter = '';
+var childDocsCounter = '';
 
 function Category(id){
 	this.id = id;
@@ -41,7 +43,7 @@ function loadCats(id,done,connection) {
 	
 	var resultData = [];
 	
-	var query = "SELECT label, parent, category FROM Category where parent = "+id;
+	var query = "SELECT * FROM Category where parent = "+id;
 	
 	  request = new Request(query, function(err, rowCount) {
 	    if (err) {
@@ -65,16 +67,21 @@ function loadCats(id,done,connection) {
 	    columns.forEach(function(column) {
 	      if (column.value === null) {
 
-	      } else if(column.metadata.colName == 'label'){
+	      } else if(column.metadata.colName == 'Label'){
 	    	  doc.label = column.value;
-	      } else if(column.metadata.colName == 'category'){
+	      } else if(column.metadata.colName == 'Category'){
 	    	  doc.id = column.value;
-	      } else if(column.metadata.colName == 'parent'){
+	      } else if(column.metadata.colName == 'Parent'){
 	    	  doc.parent = column.value;
+	      } else if(column.metadata.colName == 'DocsCounter'){
+	    	  doc.docsCounter = column.value;
+	      } else if(column.metadata.colName == 'ChildDocsCounter'){
+	    	  doc.childDocsCounter = column.value;
 	      }
-	      resultData.push(doc);
+	      
+	      
 	    });
-	    
+	    resultData.push(doc);
 
 	  });
 	  
