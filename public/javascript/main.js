@@ -30,18 +30,33 @@
 		 var parameters = { search: $(this).val(), id:1 };
 		 $.get( '/layers/loadActiveLayers',parameters, function(data) {
 			 $.each(data.layers, function(i, layer) {
-		    	  // alert('layer'+layer.layerName);
-		    	      // add a row to the table
-		    	      $('<canvas style=" margin:5px; border:1px solid #000900;">').append(
+				 $('<div style=" margin:15px; border:0px solid #000900;height:100px;width:400px;">').append(
+						 $('<input type="checkbox">').html(layer.layerName),
+						 $('<label>').text(layer.layerName),
+						 $('<input id="search" type="image" src="images/icons/layer-layer-on.png" >').text('&nbsp;&nbsp;'),
+						 $('<input id="search" type="image" src="images/icons/layer-labels-on.png" >').text(' '),
+						 $('<input id="search" type="image" src="images/icons/layer-wms-on.png" >').text('&nbsp;&nbsp;'),
+
+						 $('<input id="search" type="image" src="images/icons/layer-legend-on.png" >').text('  '),
+
+						 $('<canvas class="layerCanvas'+i+'" style="width="100px"; margin:5px; border:1px solid #000900;">')
 		    	        // add a cell to the row with the todo title
-		    	        $('<label>').text(layer.layerName),
+		    	        
 		    	       
 		    	        // and another cell with the due date
-		    	        $('<input>').text('dd')
-		    	      ).appendTo('#layersDiv');
+		    	        		    	      ).appendTo('#layersDiv');
 		    	      
+				  var ctx = $(".layerCanvas"+i)[0].getContext("2d");
+				  ctx.moveTo(0,0);
+				  
+				  ctx.fillStyle = "#"+layer.color;
+				  ctx.fillRect(0,0,50,30);
 		    	     // alert('layer'+$('#layersDiv').html());
 		       	});
+			 
+
+			//  ctx.stroke();
+			  
 		   });   
 	});
 	 
