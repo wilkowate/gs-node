@@ -30,6 +30,13 @@
 		 var parameters = { search: $(this).val(), id:1 };
 		 $.get( '/layers/loadActiveLayers',parameters, function(data) {
 			 $.each(data.layers, function(i, layer) {
+				 
+				 //PROCESS EACH LAYER
+				 
+				 if(layer.layerName == 'imagesDB'){
+					 return true;
+				 }
+				 
 				 $('<div style=" margin:15px; border:0px solid #000900;height:100px;width:400px;">').append(
 						 $('<input type="checkbox">').html(layer.layerName),
 						 $('<label>').text(layer.layerName),
@@ -38,14 +45,43 @@
 						 $('<input id="search" type="image" src="images/icons/layer-wms-on.png" >').text('&nbsp;&nbsp;'),
 
 						 $('<input id="search" type="image" src="images/icons/layer-legend-on.png" >').text('  '),
-
 						 $('<canvas class="layerCanvas'+i+'" style="width="100px"; margin:5px; border:1px solid #000900;">')
 		    	        // add a cell to the row with the todo title
-		    	        
-		    	       
 		    	        // and another cell with the due date
-		    	        		    	      ).appendTo('#layersDiv');
-		    	      
+	    	      ).appendTo('#layersDiv');
+		    	  
+			     var vectorSource = new ol.source.Vector({
+			         url: 'https://openlayers.org/en/v4.2.0/examples/data/geojson/countries.geojson',
+			         format: new ol.format.GeoJSON()
+			       });
+			     
+			     
+			     var hexColor = "#"+layer.color;
+			     var color = ol.color.asArray(hexColor);
+			     color = color.slice();
+			     color[3] = 0.2;
+			     
+			       var vector = new ol.layer.Vector({
+			         source: vectorSource,
+			         style: new ol.style.Style({
+			           stroke: new ol.style.Stroke({
+			             color: "#"+layer.color,
+			             width: 20-i*2
+			           }),
+			         fill : new ol.style.Fill(
+			                 {
+			                   color : color
+			                 })
+			         })
+			       });
+			       
+			       map.addLayer(vector);
+					 
+				// map.addLayer(new ol.layer.Vector({
+				//     source: vectorSource
+				//}));
+				 
+				 
 				  var ctx = $(".layerCanvas"+i)[0].getContext("2d");
 				  ctx.moveTo(0,0);
 				  
