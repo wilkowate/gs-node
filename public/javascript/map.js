@@ -115,6 +115,22 @@ var canvas = document.createElement('canvas');
        })
      });
      
+     var vectorSource = new ol.source.Vector({
+         url: 'https://openlayers.org/en/v4.2.0/examples/data/geojson/countries.geojson',
+         format: new ol.format.GeoJSON()
+       });
+     
+     
+       var vector = new ol.layer.Vector({
+         source: vectorSource,
+         style: new ol.style.Style({
+           stroke: new ol.style.Stroke({
+             color: 'rgba(0, 0, 255, 1.0)',
+             width: 2
+           })
+         })
+       });
+       
 
      var map = new ol.Map({
     	    target: 'map',
@@ -122,16 +138,16 @@ var canvas = document.createElement('canvas');
     	      new ol.layer.Tile({
     	            source: new ol.source.OSM()
     	        }),
-    	       // vectorLayer,
-    	      new ol.layer.Tile({
-    	        title: 'Global Imagery',
-    	        source: new ol.source.TileWMS({
-    	         // url: 'http://demo.opengeo.org/geoserver/wms',
-    	          url: 'http://gs.hamptondata.com/geoserver/hds/wms?service=WMS',
-    	          params: {LAYERS: 'hds:wells_eom_WI', VERSION: '1.1.0'}
-    	          //params: {LAYERS: 'nasa:bluemarble', VERSION: '1.1.1'}
-    	        })
-    	      })
+    	        vector
+//    	      new ol.layer.Tile({
+//    	        title: 'Global Imagery',
+//    	        source: new ol.source.TileWMS({
+//    	         // url: 'http://demo.opengeo.org/geoserver/wms',
+//    	          url: 'http://gs.hamptondata.com/geoserver/hds/wms?service=WMS',
+//    	          params: {LAYERS: 'hds:wells_eom_WI', VERSION: '1.1.0'}
+//    	          //params: {LAYERS: 'nasa:bluemarble', VERSION: '1.1.1'}
+//    	        })
+//    	      })
 
     	    ],
     	    view: new ol.View({
@@ -139,12 +155,66 @@ var canvas = document.createElement('canvas');
     	      center: [50, 50],
     	      zoom: 3,
     	      maxResolution: 0.703125
-    	    })  })
+    	    }) 
+     })
     	    
     	 //  var canvas = document.createElement('canvas');
     	 //  var render = ol.render.toContext(canvas.getContext('2d'),  { size: [100, 100] });
     	   //  render.setFillStrokeStyle(new ol.style.Fill({ color: '#00f' }));
     	  //   render.drawPolygon(    new ol.geom.Polygon([[[0, 0], [100, 100], [200, 10], [0, 2]]]));
+     
+     
+     
+     
+     
+     
+     
+     // a normal select interaction to handle click
+     var select = new ol.interaction.Select();
+     map.addInteraction(select);
+
+     var selectedFeatures = select.getFeatures();
+
+     // a DragBox interaction used to select features by drawing boxes
+     var dragBox = new ol.interaction.DragBox({
+       condition: ol.events.condition.platformModifierKeyOnly
+     });
+
+     map.addInteraction(dragBox);
+
+     dragBox.on('boxend', function() {
+    	
+       // features that intersect the box are added to the collection of
+       // selected features
+       var extent = dragBox.getGeometry().getExtent();
+       
+       vector.setVisible(false);
+
+       vectorSource.forEachFeatureIntersectingExtent(extent, function(feature) {
+    	   
+         selectedFeatures.push(feature);
+       });
+     });
+
+     // clear selection when drawing a new box and when clicking on the map
+     dragBox.on('boxstart', function() {
+       selectedFeatures.clear();
+     });
+
+     var infoBox = document.getElementById('info');
+
+     selectedFeatures.on(['add', 'remove'], function() {
+       var names = selectedFeatures.getArray().map(function(feature) {
+         return feature.get('name');
+       });
+       if (names.length > 0) {
+         infoBox.innerHTML = names.join(', ');
+       } else {
+         infoBox.innerHTML = 'No countries selected';
+       }
+     });
+     
+     
 
 	 
  });
