@@ -1,3 +1,11 @@
+	 	var vis = function(id){
+			alert( "H) called."+id);
+			layers[id].setVisible(false);
+		}
+	 	
+	 	layers = [];
+	 	
+	 	
 /**
  * http://usejsdoc.org/
  */
@@ -37,18 +45,22 @@
 					 return true;
 				 }
 				 
-				 $('<div style=" margin:15px; border:0px solid #000900;height:100px;width:400px;">').append(
+				 $('<div class="layer" style=" margin:15px; border:0px solid #000900;height:150px;width:400px;">').append(
 						 $('<input type="checkbox">').html(layer.layerName),
 						 $('<label>').text(layer.layerName),
-						 $('<input id="search" type="image" src="images/icons/layer-layer-on.png" >').text('&nbsp;&nbsp;'),
-						 $('<input id="search" type="image" src="images/icons/layer-labels-on.png" >').text(' '),
-						 $('<input id="search" type="image" src="images/icons/layer-wms-on.png" >').text('&nbsp;&nbsp;'),
+						 $('<input onclick = vis("'+layer.layerName+'"); data-layer_id="'+layer.layerName+'"  type="image" src="images/icons/layer-layer-on.png" >').text('&nbsp;&nbsp;'),
+						 $('<input data-layer_id="'+layer.layerName+'"  type="image" src="images/icons/layer-labels-on.png" >').text(' '),
+						 $('<input data-layer_id="'+layer.layerName+'"  type="image" src="images/icons/layer-wms-on.png" >').text('&nbsp;&nbsp;'),
 
-						 $('<input id="search" type="image" src="images/icons/layer-legend-on.png" >').text('  '),
-						 $('<canvas class="layerCanvas'+i+'" style="width="100px"; margin:5px; border:1px solid #000900;">')
+						 $('<input  type="image" src="images/icons/layer-legend-on.png" >').text('  '),
+						 $('<canvas class="layerCanvas'+i+'" style="width="100px";height=100px; margin:5px; border:1px solid #000900;">')
 		    	        // add a cell to the row with the todo title
 		    	        // and another cell with the due date
 	    	      ).appendTo('#layersDiv');
+				 
+				 //var canvas = document.getElementsByTagName('canvas')[0];
+				 //canvas.width  = 300;
+				 //canvas.height = 100;
 		    	  
 			     var vectorSource = new ol.source.Vector({
 			         url: 'https://openlayers.org/en/v4.2.0/examples/data/geojson/countries.geojson',
@@ -75,6 +87,8 @@
 			         })
 			       });
 			       
+			       layers[layer.layerName] = vector;
+			       
 			       map.addLayer(vector);
 					 
 				// map.addLayer(new ol.layer.Vector({
@@ -91,6 +105,13 @@
 		       	});
 			 
 
+				$( ".layer" ).find( 'input' ).click(function() {
+					  alert( "Handler for .click() called."+$(this).attr('data-layer_id') );
+					  $(this).attr('src','images/icons/layer-legend-off.png');
+					  
+					  
+					});
+				
 			//  ctx.stroke();
 			  
 		   });   
