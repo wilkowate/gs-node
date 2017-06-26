@@ -1,5 +1,7 @@
  $( document ).ready(function() {  
 	 
+	 layers = [];
+	 
 var canvas = document.createElement('canvas');
      var context = canvas.getContext('2d');
      
@@ -131,23 +133,60 @@ var canvas = document.createElement('canvas');
          })
        });
        
+              /**
+        * JSONP WFS callback function.
+        * @param {Object} response The response object.
+        */
+       window.loadFeatures = function(response) {
+      	 vectorSource_wells.addFeatures(geojsonFormat.readFeatures(response));
+       };
+       
+       var geojsonFormat = new ol.format.GeoJSON();
+       
+       var vectorSource_wells = new ol.source.Vector({
+           loader: function(extent, resolution, projection) {
+             var url = 'http://192.168.1.162:8080/geoserver/cite/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=cite:wells_eom_WGS84_webview&maxFeatures=50&outputFormat=text/javascript&format_options=callback:loadFeatures';
+             			//http://localhost:8080/geoserver/topp/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=topp:states&maxFeatures=50&outputFormat=application%2Fjson';
+             // use jsonp: false to prevent jQuery from adding the "callback"
+             // parameter to the URL
+             $.ajax({url: url, dataType: 'jsonp', jsonp: false});
+           },
+           strategy: ol.loadingstrategy.tile(ol.tilegrid.createXYZ({
+             maxZoom: 19
+           }))
+         });
+       
 
-     var map = new ol.Map({
+       
+       var vector_wells = new ol.layer.Vector({
+           source: vectorSource_wells,
+           style: new ol.style.Style({
+          	 image: new ol.style.Circle({
+                   radius: 10,
+                   fill: new ol.style.Fill({color: '#66ccff'}),
+                   stroke: new ol.style.Stroke({color: '#000', width: 1})
+                 })
+           })
+         });
+       
+       layers['wells'] = vector_wells;
+
+      map = new ol.Map({
     	    target: 'map',
     	    layers: [
     	      new ol.layer.Tile({
     	            source: new ol.source.OSM()
     	        }),
-    	        vector
-//    	      new ol.layer.Tile({
-//    	        title: 'Global Imagery',
-//    	        source: new ol.source.TileWMS({
-//    	         // url: 'http://demo.opengeo.org/geoserver/wms',
-//    	          url: 'http://gs.hamptondata.com/geoserver/hds/wms?service=WMS',
-//    	          params: {LAYERS: 'hds:wells_eom_WI', VERSION: '1.1.0'}
-//    	          //params: {LAYERS: 'nasa:bluemarble', VERSION: '1.1.1'}
-//    	        })
-//    	      })
+    	        vector,vector_wells
+//       	      new ol.layer.Tile({
+//         	        title: 'Global Imagery',
+//         	        source: new ol.source.TileWMS({
+//         	         // url: 'http://demo.opengeo.org/geoserver/wms',
+//         	          url: 'http://192.168.1.162:8080/geoserver/cite/wms?service=WMS',
+//         	          params: {LAYERS: 'cite:wells_eom_WGS84_webview', VERSION: '1.1.0'}
+//         	          //params: {LAYERS: 'nasa:bluemarble', VERSION: '1.1.1'}
+//         	        })
+//         	      }),
 
     	    ],
     	    view: new ol.View({
@@ -190,7 +229,7 @@ var canvas = document.createElement('canvas');
        
        vector.setVisible(false);
 
-       vectorSource.forEachFeatureIntersectingExtent(extent, function(feature) {
+       vectorSource_wells.forEachFeatureIntersectingExtent(extent, function(feature) {
     	   
          selectedFeatures.push(feature);
        });
@@ -205,7 +244,7 @@ var canvas = document.createElement('canvas');
 
      selectedFeatures.on(['add', 'remove'], function() {
        var names = selectedFeatures.getArray().map(function(feature) {
-         return feature.get('name');
+         return feature.get('Object');
        });
        if (names.length > 0) {
          infoBox.innerHTML = names.join(', ');
