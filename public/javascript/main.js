@@ -1,7 +1,4 @@
-	 	var vis = function(id){
-			alert( "H) called."+id);
-			layers[id].setVisible(false);
-		}
+
 	 	
 	 	layers = [];
 	 	
@@ -89,7 +86,7 @@
 			       
 			       layers[layer.layerName] = vector;
 			       
-			       map.addLayer(vector);
+			       //map.addLayer(vector);
 					 
 				// map.addLayer(new ol.layer.Vector({
 				//     source: vectorSource
@@ -106,8 +103,14 @@
 			 
 
 				$( ".layer" ).find( 'input' ).click(function() {
-					  alert( "Handler for .click() called."+$(this).attr('data-layer_id') );
-					  $(this).attr('src','images/icons/layer-legend-off.png');
+					  //alert( "Handler for .click() called."+$(this).attr('data-layer_id') );
+					  if($(this).attr('src')=='images/icons/layer-layer-off.png'){
+						  $(this).attr('src','images/icons/layer-layer-on.png');
+						  layers['wells'].setVisible(true);
+					  } else{
+						  $(this).attr('src','images/icons/layer-layer-off.png');
+						  layers['wells'].setVisible(false);
+					  }
 					  
 					  
 					});
