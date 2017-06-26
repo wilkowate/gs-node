@@ -8,6 +8,7 @@ var Request = require('tedious').Request;
 var db = require('./database.js');
 
 var layerName = '';
+var geoServerLayerName = '';
 var nrDocs = 0;
 var layerId = 0;
 var parentId = 0;
@@ -72,6 +73,8 @@ function loadLayers(id,done,connection) {
 	    	  doc.layerName = column.value;
 	      } else if(column.metadata.colName == 'Color'){
 	    	  doc.color = column.value;
+	      } else if(column.metadata.colName == 'GeoServerLayerName'){
+	    	  doc.geoServerLayerName = column.value;
 	      } 
 	      
 	    });
