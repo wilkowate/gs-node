@@ -31,13 +31,13 @@
 				var layerName = layer.layerName+"_webview";
 				
 				$('<div class="layer" style=" margin:15px; border:0px solid #000900;height:150px;width:400px;">').append(
-						$('<input type="checkbox">').html(layer.layerName),
-						$('<label>').text(layer.layerName),
-						$('<input data-layer_id="'+layerName+'"  type="image" src="images/icons/layer-layer-on.png" >').text('&nbsp;&nbsp;'),
-						$('<input data-layer_id="'+layerName+'"  type="image" src="images/icons/layer-labels-on.png" >').text(' '),
-						$('<input data-layer_id="'+layerName+'"  type="image" src="images/icons/layer-wms-on.png" >').text('&nbsp;&nbsp;'),
-						$('<input  type="image" src="images/icons/layer-legend-on.png" >').text('  '),
-						$('<canvas class="layerCanvas'+i+'" style="width="100px";height=100px; margin:5px; border:1px solid #000900;">')
+					$('<input type="checkbox">').html(layer.layerName),
+					$('<label>').text(layer.layerName),
+					$('<input data-layer_id="'+layerName+'"  type="image" src="images/icons/layer-layer-on.png" >').text('&nbsp;&nbsp;'),
+					$('<input data-layer_id="'+layerName+'"  type="image" src="images/icons/layer-labels-on.png" >').text(' '),
+					$('<input data-layer_id="'+layerName+'"  type="image" src="images/icons/layer-wms-on.png" >').text('&nbsp;&nbsp;'),
+					$('<input  type="image" src="images/icons/layer-legend-on.png" >').text('  '),
+					$('<canvas class="layerCanvas'+i+'" style="width="100px";height=100px; margin:5px; border:1px solid #000900;">')
 			    	    // add a cell to the row with the todo title
 			    	    // and another cell with the due date
 				).appendTo('#layersDiv');
@@ -48,31 +48,31 @@
 				
 			    	  
 			    var vectorSource_wells = new ol.source.Vector({
-			           loader: function(extent, resolution, projection) {
+			    	loader: function(extent, resolution, projection) {
 			             var url = 'http://192.168.1.162:8080/geoserver/cite/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=cite:'+layer.geoServerLayerName+'&maxFeatures=50&outputFormat=text/javascript&format_options=callback:loadFeatures1';
 			             			//http://localhost:8080/geoserver/topp/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=topp:states&maxFeatures=50&outputFormat=application%2Fjson';
 			             // use jsonp: false to prevent jQuery from adding the "callback"
 			             // parameter to the URL
 			             $.ajax({url: url, dataType: 'jsonp', jsonp: false});
 			           },
-			           strategy: ol.loadingstrategy.tile(ol.tilegrid.createXYZ({
+			        strategy: ol.loadingstrategy.tile(ol.tilegrid.createXYZ({
 			             maxZoom: 19
-			           }))
-			         });
+			        }))
+			    });
 				     
 				glLayerSources[layerName.toLowerCase()] = vectorSource_wells;
 				//alert("s"+layerName+"|");
 				     
-				     var hexColor = "#"+layer.color;
-				     var color = ol.color.asArray(hexColor);
-				     color = color.slice();
-				     color[3] = 0.2;
+				var hexColor = "#"+layer.color;
+				var color = ol.color.asArray(hexColor);
+				color = color.slice();
+				color[3] = 0.2;
 				     
-				       var vector = new ol.layer.Vector({
-				         source: vectorSource_wells,
-				         style: new ol.style.Style({
-				           stroke: new ol.style.Stroke({
-				             color: "#"+layer.color,
+				var vector = new ol.layer.Vector({
+					source: vectorSource_wells,
+				    style: new ol.style.Style({
+				    	stroke: new ol.style.Stroke({
+				    		color: "#"+layer.color,
 				             width: 20-i*2
 				           }),
 				         fill : new ol.style.Fill(
@@ -97,7 +97,7 @@
 					  ctx.fillStyle = "#"+layer.color;
 					  ctx.fillRect(0,0,50,30);
 			    	     // alert('layer'+$('#layersDiv').html());
-			       	});
+			});
 				 
 
 					$( ".layer" ).find( 'input' ).click(function() {

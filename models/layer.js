@@ -9,6 +9,7 @@ var db = require('./database.js');
 
 var layerName = '';
 var geoServerLayerName = '';
+var shapeType = 1;
 var nrDocs = 0;
 var layerId = 0;
 var parentId = 0;
@@ -75,6 +76,8 @@ function loadLayers(id,done,connection) {
 	    	  doc.color = column.value;
 	      } else if(column.metadata.colName == 'GeoServerLayerName'){
 	    	  doc.geoServerLayerName = column.value;
+	      } else if(column.metadata.colName == 'ShapeType'){
+	    	  doc.shapeType = column.value;
 	      } 
 	      
 	    });
