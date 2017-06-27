@@ -49,7 +49,7 @@
 			    	  
 			    var vectorSource_wells = new ol.source.Vector({
 			    	loader: function(extent, resolution, projection) {
-			             var url = 'http://192.168.1.162:8080/geoserver/cite/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=cite:'+layer.geoServerLayerName+'&maxFeatures=50&outputFormat=text/javascript&format_options=callback:loadFeatures1';
+			             var url = 'http://192.168.1.162:8080/geoserver/cite/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=cite:'+layer.geoServerLayerName+'&maxFeatures=5000&outputFormat=text/javascript&format_options=callback:loadFeatures1';
 			             			//http://localhost:8080/geoserver/topp/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=topp:states&maxFeatures=50&outputFormat=application%2Fjson';
 			             // use jsonp: false to prevent jQuery from adding the "callback"
 			             // parameter to the URL
@@ -63,28 +63,16 @@
 				glLayerSources[layerName.toLowerCase()] = vectorSource_wells;
 				//alert("s"+layerName+"|");
 				     
-				var hexColor = "#"+layer.color;
-				var color = ol.color.asArray(hexColor);
-				color = color.slice();
-				color[3] = 0.2;
+
 				     
 				var vector = new ol.layer.Vector({
 					source: vectorSource_wells,
-				    style: new ol.style.Style({
-				    	stroke: new ol.style.Stroke({
-				    		color: "#"+layer.color,
-				             width: 20-i*2
-				           }),
-				         fill : new ol.style.Fill(
-				                 {
-				                   color : color
-				                 })
-				         })
-				       });
+				    style: getStyle(layer.shapeType, layer.color)
+				    });
 				       
-				       layers[layerName] = vector;
+				layers[layerName] = vector;
 				       
-				       map.addLayer(vector);
+				map.addLayer(vector);
 						 
 					// map.addLayer(new ol.layer.Vector({
 					//     source: vectorSource
@@ -98,24 +86,52 @@
 					  ctx.fillRect(0,0,50,30);
 			    	     // alert('layer'+$('#layersDiv').html());
 			});
-				 
 
-					$( ".layer" ).find( 'input' ).click(function() {
-						  //alert( "Handler for .click() called."+$(this).attr('data-layer_id') );
-						  if($(this).attr('src')=='images/icons/layer-layer-off.png'){
-							  $(this).attr('src','images/icons/layer-layer-on.png');
-							  layers[$(this).attr('data-layer_id')].setVisible(true);
-						  } else{
-							  $(this).attr('src','images/icons/layer-layer-off.png');
-							  layers[$(this).attr('data-layer_id')].setVisible(false);
-						  }
-						  
-						  
-						});
+			$( ".layer" ).find( 'input' ).click(function() {
+				  //alert( "Handler for .click() called."+$(this).attr('data-layer_id') );
+				if($(this).attr('src')=='images/icons/layer-layer-off.png'){
+					$(this).attr('src','images/icons/layer-layer-on.png');
+					layers[$(this).attr('data-layer_id')].setVisible(true);
+				} else{
+					$(this).attr('src','images/icons/layer-layer-off.png');
+					layers[$(this).attr('data-layer_id')].setVisible(false);
+				}
+			});
 					
 				//  ctx.stroke();
 				  
 			   });   
-		});
+	});
+	
+	function getStyle(shapeType, colorTxt){
+		
+		var hexColor = "#"+colorTxt;
+		var color = ol.color.asArray(hexColor);
+		color = color.slice();
+		color[3] = 0.2;
+		
+		var polygonStyles = [
+		     new ol.style.Style({
+		    	 fill: new ol.style.Fill({color: color}),
+		    	 stroke: new ol.style.Stroke({color: 'black', width: 1})
+		     })
+		];
+		
+		var pointStyles = [
+		     new ol.style.Style({
+	          	 image: new ol.style.Circle({
+	                  radius: 10,
+	                  fill: new ol.style.Fill({color: '#66ccff'}),
+	                  stroke: new ol.style.Stroke({color: '#000', width: 1})
+	             })
+		     })
+		];
+		
+		if(shapeType==1){
+			return pointStyles;
+		} else {
+			return polygonStyles;
+		}
+	}
   
 });
