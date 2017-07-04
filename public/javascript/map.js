@@ -1,6 +1,6 @@
  $( document ).ready(function() {  
 	 
-	 layers = [];
+
 	 
 var canvas = document.createElement('canvas');
      var context = canvas.getContext('2d');
@@ -133,56 +133,18 @@ var canvas = document.createElement('canvas');
          })
        });
        
-              /**
-        * JSONP WFS callback function.
-        * @param {Object} response The response object.
-        */
-       window.loadFeatures = function(response) {
-      	 vectorSource_wells.addFeatures(geojsonFormat.readFeatures(response));
-       };
-       
-       var geojsonFormat = new ol.format.GeoJSON();
-       
-       var vectorSource_wells = new ol.source.Vector({
-           loader: function(extent, resolution, projection) {
-             var url = 'http://192.168.1.162:8080/geoserver/cite/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=cite:wells_eom_WGS84_webview&maxFeatures=50&outputFormat=text/javascript&format_options=callback:loadFeatures';
-             			//http://localhost:8080/geoserver/topp/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=topp:states&maxFeatures=50&outputFormat=application%2Fjson';
-             // use jsonp: false to prevent jQuery from adding the "callback"
-             // parameter to the URL
-             $.ajax({url: url, dataType: 'jsonp', jsonp: false});
-           },
-           strategy: ol.loadingstrategy.tile(ol.tilegrid.createXYZ({
-             maxZoom: 19
-           }))
-         });
-       
-
-       
-       var vector_wells = new ol.layer.Vector({
-           source: vectorSource_wells,
-           style: new ol.style.Style({
-          	 image: new ol.style.Circle({
-                   radius: 10,
-                   fill: new ol.style.Fill({color: '#66ccff'}),
-                   stroke: new ol.style.Stroke({color: '#000', width: 1})
-                 })
-           })
-         });
-       
-       layers['wells'] = vector_wells;
-
       map = new ol.Map({
     	    target: 'map',
     	    layers: [
     	      new ol.layer.Tile({
     	            source: new ol.source.OSM()
     	        }),
-    	        vector,vector_wells
+    	        vector,
 //       	      new ol.layer.Tile({
-//         	        title: 'Global Imagery',
+//        	        title: 'Global Imagery',
 //         	        source: new ol.source.TileWMS({
 //         	         // url: 'http://demo.opengeo.org/geoserver/wms',
-//         	          url: 'http://192.168.1.162:8080/geoserver/cite/wms?service=WMS',
+//        	          url: 'http://192.168.1.162:8080/geoserver/cite/wms?service=WMS',
 //         	          params: {LAYERS: 'cite:wells_eom_WGS84_webview', VERSION: '1.1.0'}
 //         	          //params: {LAYERS: 'nasa:bluemarble', VERSION: '1.1.1'}
 //         	        })
@@ -203,16 +165,13 @@ var canvas = document.createElement('canvas');
     	  //   render.drawPolygon(    new ol.geom.Polygon([[[0, 0], [100, 100], [200, 10], [0, 2]]]));
      
      
-     
-     
-     
-     
+
      
      // a normal select interaction to handle click
      var select = new ol.interaction.Select();
      map.addInteraction(select);
 
-     var selectedFeatures = select.getFeatures();
+     selectedFeatures = select.getFeatures();
 
      // a DragBox interaction used to select features by drawing boxes
      var dragBox = new ol.interaction.DragBox({
@@ -229,10 +188,18 @@ var canvas = document.createElement('canvas');
        
        vector.setVisible(false);
 
-       vectorSource_wells.forEachFeatureIntersectingExtent(extent, function(feature) {
-    	   
-         selectedFeatures.push(feature);
+       glLayerSources["wells_eom_wgs84_webview"].forEachFeatureIntersectingExtent(extent, function(feature) {
+           selectedFeatures.push(feature);
        });
+       
+       glLayerSources["fields_wgs84_webview"].forEachFeatureIntersectingExtent(extent, function(feature) {
+           selectedFeatures.push(feature);
+       });
+       
+       glLayerSources["basins_webview"].forEachFeatureIntersectingExtent(extent, function(feature) {
+           selectedFeatures.push(feature);
+       });
+       
      });
 
      // clear selection when drawing a new box and when clicking on the map
@@ -253,7 +220,35 @@ var canvas = document.createElement('canvas');
        }
      });
      
+     var ghostZoom = map.getView().getZoom();
+     map.on('moveend', (function() {
+         if (ghostZoom != map.getView().getZoom()) {
+             ghostZoom = map.getView().getZoom();
+             console.log('zoomend '+ghostZoom);
+             
+             map.getLayers().forEach(function(el) {
+            	 // if (el.get('name') === 'my_layer_name') {
+            	    console.log(el.get('name'));
+            	 // }
+            	})
+            // alert(JSON.stringify(map.getLayers()));
+             
+            if(ghostZoom > 7){
+            	map.addLayer(layers["wells_eom_wgs84_webview"]);
+				map.removeLayer(glWMSLayerSources["wells_eom_wgs84_webview"]);
+            } else {
+				map.removeLayer(layers["wells_eom_wgs84_webview"]);
+				map.addLayer(glWMSLayerSources["wells_eom_wgs84_webview"]); 
+            }
+         }
+     }));
      
+    // map.on("zoomend", map, function(){
+         
+    //	 alert("zoomend");
+    	 //var lyr = map.getLayersByName('vectorLayer')[0];
+         //map.removeLayer(lyr);
+   // });
 
 	 
  });
