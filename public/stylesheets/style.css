@@ -77,12 +77,12 @@ body {
 
 #left_bottom_panel,
 #left_top_panel {
-  width: 40%;
+  width: 25%;
 }
 
 #right_top_panel,
 #right_bottom_panel {
-  width: 60%;
+  width: 75%;
   overflow-y: auto;
   overflow-x: hidden;
 }
