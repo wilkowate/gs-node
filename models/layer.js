@@ -14,6 +14,7 @@ var nrDocs = 0;
 var layerId = 0;
 var parentId = 0;
 var color = 0;
+var wmsVisibilityZoomLevel = 0;
 
 function Layer(id){
 	this.layerId = layerId;
@@ -78,6 +79,8 @@ function loadLayers(id,done,connection) {
 	    	  doc.geoServerLayerName = column.value;
 	      } else if(column.metadata.colName == 'ShapeType'){
 	    	  doc.shapeType = column.value;
+	      } else if(column.metadata.colName == 'WMSVisibilityZoomLevel'){
+	    	  doc.wmsVisibilityZoomLevel = column.value;
 	      } 
 	      
 	    });
