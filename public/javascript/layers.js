@@ -2,6 +2,7 @@
 
 	glLayerSources = [];
 	glWMSLayerSources = [];
+ 	layers = [];
 	
 	var geojsonFormat = new ol.format.GeoJSON();
 	
@@ -25,6 +26,7 @@
 				if(layer.layerName == 'imagesDB' || 
 						layer.layerName == 'russia_01' || 
 						layer.layerName == 'wells_EOM' || 
+						//layer.layerName == 'fields_WGS84' || 
 						layer.layerName == 'fields'){
 					return true;
 				}
@@ -50,7 +52,7 @@
 			    	  
 			    var vectorSource_wells = new ol.source.Vector({
 			    	loader: function(extent, resolution, projection) {
-			             var url = 'http://192.168.1.162:8080/geoserver/cite/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=cite:'+layer.geoServerLayerName+'&maxFeatures=50&outputFormat=text/javascript&format_options=callback:loadFeatures1';
+			             var url = 'http://192.168.1.162:8080/geoserver/cite/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=cite:'+layer.geoServerLayerName+'&maxFeatures=500000&outputFormat=text/javascript&format_options=callback:loadFeatures1';
 			             			//http://localhost:8080/geoserver/topp/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=topp:states&maxFeatures=50&outputFormat=application%2Fjson';
 			             // use jsonp: false to prevent jQuery from adding the "callback"
 			             // parameter to the URL
@@ -65,7 +67,7 @@
 	       	    	title: 'Global Imagery',
 	         	    source: new ol.source.TileWMS({
 	         	    url: 'http://192.168.1.162:8080/geoserver/cite/wms?service=WMS',
-	         	    params: {LAYERS: 'cite:wells_eom_WGS84_webview', VERSION: '1.1.0'}
+	         	    params: {LAYERS: 'cite:'+layer.geoServerLayerName, VERSION: '1.1.0'}
 	         	          //params: {LAYERS: 'nasa:bluemarble', VERSION: '1.1.1'}
 	         	    })
 	       	    });
@@ -79,8 +81,14 @@
 				});
 				       
 				layers[layerName.toLowerCase()] = vector;
+				
+				if(layerName.toLowerCase()=="wells_eom_wgs84_webview" ||
+						layerName.toLowerCase()== 'fields_wgs84_webview'){
+					map.addLayer(wmsSource);
+				}else {
 				       
-				map.addLayer(vector);
+					map.addLayer(vector);
+				}
 						 
 					// map.addLayer(new ol.layer.Vector({
 					//     source: vectorSource
@@ -103,6 +111,7 @@
 				} else if($(this).attr('src')=='images/icons/layer-layer-on.png'){
 					$(this).attr('src','images/icons/layer-layer-off.png');
 					layers[$(this).attr('data-layer_id')].setVisible(false);
+					glWMSLayerSources[$(this).attr('data-layer_id')].setVisible(false);
 				}
 				
 				if($(this).attr('src')=='images/icons/layer-labels-off.png'){
@@ -115,33 +124,21 @@
 				
 				if($(this).attr('src')=='images/icons/layer-wms-off.png'){
 					$(this).attr('src','images/icons/layer-wms-on.png');
-					alert('off'+$(this).attr('data-layer_id'));
-
-					
 					map.addLayer(layers[$(this).attr('data-layer_id')]);
-					alert('off1'+$(this).attr('data-layer_id'));
 					map.removeLayer(glWMSLayerSources[$(this).attr('data-layer_id')]);
-					
-					
 				} else if($(this).attr('src')=='images/icons/layer-wms-on.png'){
-					alert('ON'+$(this).attr('data-layer_id'));
 					$(this).attr('src','images/icons/layer-wms-off.png');
-
-					//layers[$(this).attr('data-layer_id')].setVisible(false);
-					//glWMSLayerSources[$(this).attr('data-layer_id')].setVisible(false);
-					
 					map.removeLayer(layers[$(this).attr('data-layer_id')]);
 					map.addLayer(glWMSLayerSources[$(this).attr('data-layer_id')]);
-					
 				}
-				
-				
-				
 			});
 					
 				//  ctx.stroke();
 				  
-			   });   
+		}); 
+		
+		//map.removeLayer(layers["fields_wgs84_webview"]);
+		//map.addLayer(glWMSLayerSources["fields_wgs84_webview"]); 
 	});
 	
 	
