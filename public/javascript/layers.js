@@ -36,9 +36,9 @@
 				$('<div class="layer" style=" margin:15px; border:0px solid #000900;height:150px;width:400px;">').append(
 					$('<input type="checkbox">').html(layer.layerName),
 					$('<label>').text(layer.layerName),
-					$('<input data-layer_id="'+layerName.toLowerCase()+'"  type="image" src="images/icons/layer-layer-on.png" >').text('&nbsp;&nbsp;'),
-					$('<input data-layer_id="'+layerName.toLowerCase()+'"  type="image" src="images/icons/layer-labels-on.png" >').text(' '),
-					$('<input data-layer_id="'+layerName.toLowerCase()+'"  type="image" src="images/icons/layer-wms-on.png" >').text('&nbsp;&nbsp;'),
+					$('<input data-layerId="'+layerName.toLowerCase()+'"  type="image" src="images/icons/layer-layer-on.png" >').text('&nbsp;&nbsp;'),
+					$('<input data-layerId="'+layerName.toLowerCase()+'"  type="image" src="images/icons/layer-labels-on.png" >').text(' '),
+					$('<input data-layerId="'+layerName.toLowerCase()+'"  type="image" src="images/icons/layer-wms-on.png" >').text('&nbsp;&nbsp;'),
 					$('<input  type="image" src="images/icons/layer-legend-on.png" >').text('  '),
 					$('<canvas class="layerCanvas'+i+'" style="width="100px";height=100px; margin:5px; border:1px solid #000900;">')
 			    	    // add a cell to the row with the todo title
@@ -104,32 +104,34 @@
 			});
 
 			$( ".layer" ).find( 'input' ).click(function() {
-				  //alert( "Handler for .click() called."+$(this).attr('data-layer_id') +$(this).attr('src'));
 				if($(this).attr('src')=='images/icons/layer-layer-off.png'){
 					$(this).attr('src','images/icons/layer-layer-on.png');
-					layers[$(this).attr('data-layer_id')].setVisible(true);
+					layers[$(this).attr('data-layerId')].setVisible(true);
+					glWMSLayerSources[$(this).attr('data-layerId')].setVisible(true);
+					sessionStorage.setItem("visLayer"+$(this).attr('data-layerId'),"1");
 				} else if($(this).attr('src')=='images/icons/layer-layer-on.png'){
 					$(this).attr('src','images/icons/layer-layer-off.png');
-					layers[$(this).attr('data-layer_id')].setVisible(false);
-					glWMSLayerSources[$(this).attr('data-layer_id')].setVisible(false);
+					layers[$(this).attr('data-layerId')].setVisible(false);
+					glWMSLayerSources[$(this).attr('data-layerId')].setVisible(false);
+					sessionStorage.setItem("visLayer"+$(this).attr('data-layerId'),"0");
 				}
 				
 				if($(this).attr('src')=='images/icons/layer-labels-off.png'){
 					$(this).attr('src','images/icons/layer-labels-on.png');
-					sessionStorage.setItem("visLabels"+$(this).attr('data-layer_id'),"1");
+					sessionStorage.setItem("visLabels"+$(this).attr('data-layerId'),"1");
 				} else if($(this).attr('src')=='images/icons/layer-labels-on.png'){
 					$(this).attr('src','images/icons/layer-labels-off.png');
-					sessionStorage.setItem("visLabels"+$(this).attr('data-layer_id'),"0");
+					sessionStorage.setItem("visLabels"+$(this).attr('data-layerId'),"0");
 				}
 				
 				if($(this).attr('src')=='images/icons/layer-wms-off.png'){
 					$(this).attr('src','images/icons/layer-wms-on.png');
-					map.addLayer(layers[$(this).attr('data-layer_id')]);
-					map.removeLayer(glWMSLayerSources[$(this).attr('data-layer_id')]);
+					map.addLayer(layers[$(this).attr('data-layerId')]);
+					map.removeLayer(glWMSLayerSources[$(this).attr('data-layerId')]);
 				} else if($(this).attr('src')=='images/icons/layer-wms-on.png'){
 					$(this).attr('src','images/icons/layer-wms-off.png');
-					map.removeLayer(layers[$(this).attr('data-layer_id')]);
-					map.addLayer(glWMSLayerSources[$(this).attr('data-layer_id')]);
+					map.removeLayer(layers[$(this).attr('data-layerId')]);
+					map.addLayer(glWMSLayerSources[$(this).attr('data-layerId')]);
 				}
 			});
 					
