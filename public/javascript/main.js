@@ -1,6 +1,19 @@
 
 	 	
+var showObjects =  function() {
 
+    var oTable = $('#mapObjects').dataTable( {
+        "bProcessing": true,
+        "sAjaxSource": "/mapObjects/search",
+        "bServerSide": true,
+        "aoColumns": [
+            { "mData": "layerName" },
+            { "mData": "object" }
+
+        ]
+    } );
+	
+};
 	 	
 	 	
 /**
