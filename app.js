@@ -8,6 +8,7 @@ var bodyParser = require('body-parser');
 var index = require('./routes/index');
 var users = require('./routes/users');
 var documents = require('./controllers/documents');
+var mapObjects = require('./controllers/mapObjects');
 var categories = require('./controllers/categories');
 var layers = require('./controllers/layers');
 
@@ -28,6 +29,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', index);
 app.use('/users', users);
 app.use('/documents', documents);
+app.use('/mapObjects', mapObjects);
 app.use('/categories', categories);
 app.use('/layers', layers);
 
