@@ -139,7 +139,7 @@ var canvas = document.createElement('canvas');
     	      new ol.layer.Tile({
     	            source: new ol.source.OSM()
     	        }),
-    	        vector,
+    	        
 //       	      new ol.layer.Tile({
 //        	        title: 'Global Imagery',
 //         	        source: new ol.source.TileWMS({
@@ -189,6 +189,10 @@ var canvas = document.createElement('canvas');
        vector.setVisible(false);
 
        glLayerSources["wells_eom_wgs84_webview"].forEachFeatureIntersectingExtent(extent, function(feature) {
+    	   selectedFeatures.push(feature);
+       });
+       
+       glWMSLayerSources["wells_eom_wgs84_webview"].forEachFeatureIntersectingExtent(extent, function(feature) {
            selectedFeatures.push(feature);
        });
        
