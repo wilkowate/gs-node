@@ -1,15 +1,28 @@
  $( document ).ready(function() {
 
 	glLayerSources = [];
+	//glLayersCluster = [];
 	glWMSLayerSources = [];
  	layers = [];
+ 	layerIds = [];
 	
 	var geojsonFormat = new ol.format.GeoJSON();
 	
     window.loadFeatures1 = function(response) {
- 	   //alert(JSON.stringify(response));
-    	
-    	var layerName = response.features[0].properties.layer.trim()+"_webview";
+ 	   
+ 	   
+ 	 // alert('layer:'+JSON.stringify(response.features[0].properties.layer));
+ 	  
+ 	 //alert('Layer:'+JSON.stringify(response.features[0].properties.Layer));
+    	var layerName = "";
+    	if(typeof response.features[0].properties.layer !== "undefined"){
+
+    		layerName = response.features[0].properties.layer.trim()+"_webview";
+    	} else {
+    		//alert(JSON.stringify(response.features[0].properties.Layer));
+    		layerName = response.features[0].properties.Layer.trim()+"_webview";
+    	}
+
     	//alert("L:"+layerName+"|");
     	glLayerSources[layerName.toLowerCase()].addFeatures(geojsonFormat.readFeatures(response));
     	//vectorSource_wells.addFeatures(geojsonFormat.readFeatures(response));
@@ -32,6 +45,7 @@
 				}
 					 
 				var layerName = layer.layerName+"_webview";
+				layerIds.push(layerName.toLowerCase());
 				
 				$('<div class="layer" style=" margin:15px; border:0px solid #000900;height:150px;width:400px;">').append(
 					$('<input type="checkbox">').html(layer.layerName),
@@ -52,10 +66,8 @@
 			    	  
 			    var vectorSource_wells = new ol.source.Vector({
 			    	loader: function(extent, resolution, projection) {
-			             var url = 'http://192.168.1.162:8080/geoserver/cite/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=cite:'+layer.geoServerLayerName+'&maxFeatures=500000&outputFormat=text/javascript&format_options=callback:loadFeatures1';
-			             			//http://localhost:8080/geoserver/topp/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=topp:states&maxFeatures=50&outputFormat=application%2Fjson';
-			             // use jsonp: false to prevent jQuery from adding the "callback"
-			             // parameter to the URL
+			             var url = 'http://192.168.1.162:8080/geoserver/cite/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=cite:'+layer.geoServerLayerName+'&maxFeatures=600000&outputFormat=text/javascript&format_options=callback:loadFeatures1';
+			             // use jsonp: false to prevent jQuery from adding the "callback" parameter to the URL
 			             $.ajax({url: url, dataType: 'jsonp', jsonp: false});
 			           },
 			        strategy: ol.loadingstrategy.tile(ol.tilegrid.createXYZ({
@@ -133,6 +145,17 @@
 					map.removeLayer(layers[$(this).attr('data-layerId')]);
 					map.addLayer(glWMSLayerSources[$(this).attr('data-layerId')]);
 				}
+				
+				if($(this).attr('src')=='images/icons/layer-legend-off.png'){
+					//alert('removecluser');
+					$(this).attr('src','images/icons/layer-legend-on.png');
+					map.addLayer(layers[$(this).attr('data-layerId')]);
+					map.removeLayer(glLayersCluster[$(this).attr('data-layerId')]);
+				} else if($(this).attr('src')=='images/icons/layer-legend-on.png'){
+					$(this).attr('src','images/icons/layer-legend-off.png');
+					map.removeLayer(layers[$(this).attr('data-layerId')]);
+					map.addLayer(glLayersCluster[$(this).attr('data-layerId')]);
+				}
 			});
 					
 				//  ctx.stroke();
@@ -162,7 +185,12 @@
 		});
 		
 		var textLabel = function(){
-			var layerName = feature.getProperties().layer.trim().toLowerCase()+"_webview";
+	    	var layerName = "";
+	    	if(typeof feature.getProperties().layer !== "undefined"){
+	    		layerName = feature.getProperties().layer.trim()+"_webview";
+	    	} else {
+	    		layerName = feature.getProperties().Layer.trim()+"_webview";
+	    	}
 			 var vis =  sessionStorage.getItem("visLabels"+layerName);
 			 if(vis == 1){
 				 return feature.get('DisplayName');
