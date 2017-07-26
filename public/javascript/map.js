@@ -133,39 +133,67 @@ var canvas = document.createElement('canvas');
          })
        });
        
-      map = new ol.Map({
-    	    target: 'map',
-    	    layers: [
-    	      new ol.layer.Tile({
-    	            source: new ol.source.OSM()
-    	        }),
-    	        
-//       	      new ol.layer.Tile({
-//        	        title: 'Global Imagery',
-//         	        source: new ol.source.TileWMS({
-//         	         // url: 'http://demo.opengeo.org/geoserver/wms',
-//        	          url: 'http://192.168.1.162:8080/geoserver/cite/wms?service=WMS',
-//         	          params: {LAYERS: 'cite:wells_eom_WGS84_webview', VERSION: '1.1.0'}
-//         	          //params: {LAYERS: 'nasa:bluemarble', VERSION: '1.1.1'}
-//         	        })
-//         	      }),
+/////////////////////// google map: //////////////////////////////////////////////  
+       var gmap = new google.maps.Map(document.getElementById('gmap'), {
+    	   disableDefaultUI: true,
+    	   keyboardShortcuts: false,
+    	   draggable: false,
+    	   disableDoubleClickZoom: true,
+    	   scrollwheel: false,
+    	   streetViewControl: false
+    	 });
 
-    	    ],
-    	    view: new ol.View({
-    	      projection: 'EPSG:4326',
-    	      center: [50, 50],
-    	      zoom: 3,
-    	      maxResolution: 0.703125
-    	    }) 
-     })
+    	 var view = new ol.View({
+    	   // make sure the view doesn't go beyond the 22 zoom levels of Google Maps
+    	   maxZoom: 21
+    	 });
+    	 view.on('change:center', function() {
+    	   var center = ol.proj.transform(view.getCenter(), 'EPSG:3857', 'EPSG:4326');
+    	   gmap.setCenter(new google.maps.LatLng(center[1], center[0]));
+    	 });
+    	 view.on('change:resolution', function() {
+    	   gmap.setZoom(view.getZoom());
+    	 });
+
+    	 var olMapDiv = document.getElementById('olmap');
+    	  map = new ol.Map({
+    	   layers: [vector],
+    	   interactions: ol.interaction.defaults({
+    	     altShiftDragRotate: false,
+    	     dragPan: false,
+    	     rotate: false
+    	   }).extend([new ol.interaction.DragPan({kinetic: null})]),
+    	   target: olMapDiv,
+    	   view: view
+    	 });
+    	 view.setCenter([0, 0]);
+    	 view.setZoom(1);
+
+    	 olMapDiv.parentNode.removeChild(olMapDiv);
+    	 gmap.controls[google.maps.ControlPosition.TOP_LEFT].push(olMapDiv);
+    	 
+/////////////////////// end google map //////////////////////////////////////////////      	 
     	    
-    	 //  var canvas = document.createElement('canvas');
-    	 //  var render = ol.render.toContext(canvas.getContext('2d'),  { size: [100, 100] });
-    	   //  render.setFillStrokeStyle(new ol.style.Fill({ color: '#00f' }));
-    	  //   render.drawPolygon(    new ol.geom.Polygon([[[0, 0], [100, 100], [200, 10], [0, 2]]]));
-     
-     
-
+/////////////////////// OSM: //////////////////////////////////////////////    	 
+//         map = new ol.Map({
+//     	    target: 'map',
+//     	    layers: [
+//     	      new ol.layer.Tile({
+//     	            source: new ol.source.OSM()
+//     	        }),
+//
+//     	    ],
+//     	    view: new ol.View({
+//     	      projection: 'EPSG:4326',
+//     	      center: [50, 50],
+//     	      zoom: 3,
+//     	      maxResolution: 0.703125
+//     	    }) 
+//      })
+/////////////////////// end OSM //////////////////////////////////////////////      	 
+    	 
+    	 
+    	 
      
      // a normal select interaction to handle click
      var select = new ol.interaction.Select();

@@ -19,6 +19,15 @@ div.map {
     heigth: 100%;
 }
 
+#map {
+      width: 100%;
+      height: 100%;
+}
+div.fill {
+      width: 100%;
+      height: 100%;
+}
+
 div.tabs {
     width: 78%;
     heigth: 100%;
