@@ -48,7 +48,7 @@ $( document ).ready(function() {
 					imgVisible = "images/icons/layer-layer-off.png";
 				}
 								
-				$('<div class="layer" style=" margin:15px; border:0px solid #000900;">').append(
+				$('<div class="layer" style=" margin:5px; border:0px solid #000900;">').append(
 					$('<input type="checkbox">').html(layer.layerName),
 					'&nbsp;&nbsp;&nbsp;',
 					$('<label>').text(layer.layerName),'<br />',
@@ -59,7 +59,7 @@ $( document ).ready(function() {
 					$('<input data-layerId="'+layerName.toLowerCase()+'"  type="image" src="images/icons/layer-wms-on.png" >').text('&nbsp;&nbsp;'),
 					'&nbsp;&nbsp;&nbsp;',
 					$('<input  type="image" src="images/icons/layer-legend-on.png" >').text('  '),
-					$('<p><canvas class="layerCanvas'+i+'" style="width:150px;height:50px; margin:5px; border:0px;"></p>')
+					$('<p><canvas class="layerCanvas'+i+'" style="width:150px;height:65px; padding:0px; border:0px;"></p>')
 			    	    // add a cell to the row with the todo title
 			    	    // and another cell with the due date
 				).appendTo('#layersDiv');
@@ -102,9 +102,12 @@ $( document ).ready(function() {
 				}
 					 
 				var ctx = $(".layerCanvas"+i)[0].getContext("2d");
-				//ctx.moveTo(0,0);
+				//ctx.moveTo(50,50);
 				ctx.fillStyle = "#"+layer.color;
-				ctx.fillRect(0,0,90,50);
+				ctx.fillRect(6,6,90,50);
+				ctx.strokeStyle = "#000000";
+				ctx.lineWidth=1;
+				ctx.strokeRect(5,5,92,52);
 
 				//ctx.fillRect(0,60,90,50);
 			});
