@@ -5,7 +5,7 @@ $( document ).ready(function() {
 	glLayerSources = [];
 	//glLayersCluster = [];
 	glWMSLayerSources = [];
- 	layers = [];
+ 	vectorLayers = [];
  	layerIds = [];
 	
 	var geojsonFormat = new ol.format.GeoJSON();
@@ -97,7 +97,7 @@ $( document ).ready(function() {
 				    style: getStyle//getStyle(layer.shapeType, layer.color)
 				});
 				       
-				layers[layerName.toLowerCase()] = vector;
+				vectorLayers[layerName.toLowerCase()] = vector;
 				
 				if(layerName.toLowerCase()=="wells_eom_wgs84_webview" ||
 						layerName.toLowerCase()== 'fields_wgs84_webview'){
@@ -123,12 +123,12 @@ $( document ).ready(function() {
 			$( ".layer" ).find( 'input' ).click(function() {
 				if($(this).attr('src')=='images/icons/layer-layer-off.png'){
 					$(this).attr('src','images/icons/layer-layer-on.png');
-					layers[$(this).attr('data-layerId')].setVisible(true);
+					vectorLayers[$(this).attr('data-layerId')].setVisible(true);
 					glWMSLayerSources[$(this).attr('data-layerId')].setVisible(true);
 					sessionStorage.setItem("visLayer"+$(this).attr('data-layerId'),"1");
 				} else if($(this).attr('src')=='images/icons/layer-layer-on.png'){
 					$(this).attr('src','images/icons/layer-layer-off.png');
-					layers[$(this).attr('data-layerId')].setVisible(false);
+					vectorLayers[$(this).attr('data-layerId')].setVisible(false);
 					glWMSLayerSources[$(this).attr('data-layerId')].setVisible(false);
 					sessionStorage.setItem("visLayer"+$(this).attr('data-layerId'),"0");
 				}
@@ -143,22 +143,22 @@ $( document ).ready(function() {
 				
 				if($(this).attr('src')=='images/icons/layer-wms-off.png'){
 					$(this).attr('src','images/icons/layer-wms-on.png');
-					map.addLayer(layers[$(this).attr('data-layerId')]);
+					map.addLayer(vectorLayers[$(this).attr('data-layerId')]);
 					map.removeLayer(glWMSLayerSources[$(this).attr('data-layerId')]);
 				} else if($(this).attr('src')=='images/icons/layer-wms-on.png'){
 					$(this).attr('src','images/icons/layer-wms-off.png');
-					map.removeLayer(layers[$(this).attr('data-layerId')]);
+					map.removeLayer(vectorLayers[$(this).attr('data-layerId')]);
 					map.addLayer(glWMSLayerSources[$(this).attr('data-layerId')]);
 				}
 				
 				if($(this).attr('src')=='images/icons/layer-legend-off.png'){
 					//alert('removecluser');
 					$(this).attr('src','images/icons/layer-legend-on.png');
-					map.addLayer(layers[$(this).attr('data-layerId')]);
+					map.addLayer(vectorLayers[$(this).attr('data-layerId')]);
 					map.removeLayer(glLayersCluster[$(this).attr('data-layerId')]);
 				} else if($(this).attr('src')=='images/icons/layer-legend-on.png'){
 					$(this).attr('src','images/icons/layer-legend-off.png');
-					map.removeLayer(layers[$(this).attr('data-layerId')]);
+					map.removeLayer(vectorLayers[$(this).attr('data-layerId')]);
 					map.addLayer(glLayersCluster[$(this).attr('data-layerId')]);
 				}
 			});
@@ -167,7 +167,7 @@ $( document ).ready(function() {
 				  
 		}); 
 		
-		//map.removeLayer(layers["fields_wgs84_webview"]);
+		//map.removeLayer(vectorLayers["fields_wgs84_webview"]);
 		//map.addLayer(glWMSLayerSources["fields_wgs84_webview"]); 
 	});
 	
