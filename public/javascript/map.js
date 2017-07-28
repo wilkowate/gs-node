@@ -258,6 +258,11 @@ var canvas = document.createElement('canvas');
              ghostZoom = map.getView().getZoom();
              console.log('zoomend '+ghostZoom);
              
+             for (let key of mapLayers.keys()) {
+            	    console.log(key);
+            	    //alert(mapLayers.get(key).webLabelZoomLevel);
+            	}
+             
              map.getLayers().forEach(function(el) {
             	 // if (el.get('name') === 'my_layer_name') {
             	    console.log(el.get('name'));
@@ -266,10 +271,10 @@ var canvas = document.createElement('canvas');
             // alert(JSON.stringify(map.getLayers()));
              
             if(ghostZoom > 7){
-            	map.addLayer(layers["wells_eom_wgs84_webview"]);
+            	map.addLayer(vectorLayers["wells_eom_wgs84_webview"]);
 				map.removeLayer(glWMSLayerSources["wells_eom_wgs84_webview"]);
             } else {
-				map.removeLayer(layers["wells_eom_wgs84_webview"]);
+				map.removeLayer(vectorLayers["wells_eom_wgs84_webview"]);
 				map.addLayer(glWMSLayerSources["wells_eom_wgs84_webview"]); 
             }
          }
