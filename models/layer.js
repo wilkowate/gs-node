@@ -15,6 +15,9 @@ var layerId = 0;
 var parentId = 0;
 var color = 0;
 var wmsVisibilityZoomLevel = 0;
+var webVisible = 0;
+var webLabelZoomLevel = 0;
+var labelsVisible = 0;
 
 function Layer(id){
 	this.layerId = layerId;
@@ -46,7 +49,7 @@ function loadLayers(id,done,connection) {
 	var resultData = [];
 	
 	var query = "SELECT * FROM ActiveLayers JOIN [MapLayersInfo] ON [MapLayersInfo].Layer =";
-	query += " ActiveLayers.Layer ";
+	query += " ActiveLayers.Layer where WebEnabled = 1";
 	
 	  request = new Request(query, function(err, rowCount) {
 	    if (err) {
@@ -81,6 +84,12 @@ function loadLayers(id,done,connection) {
 	    	  doc.shapeType = column.value;
 	      } else if(column.metadata.colName == 'WMSVisibilityZoomLevel'){
 	    	  doc.wmsVisibilityZoomLevel = column.value;
+	      } else if(column.metadata.colName == 'WebLabelZoomLevel'){
+	    	  doc.webLabelZoomLevel = column.value;
+	      } else if(column.metadata.colName == 'LabelsVisible'){
+	    	  doc.labelsVisible = column.value;
+	      } else if(column.metadata.colName == 'WebVisible'){
+	    	  doc.webVisible = column.value;
 	      } 
 	      
 	    });
