@@ -11,21 +11,12 @@ $( document ).ready(function() {
 	var geojsonFormat = new ol.format.GeoJSON();
 	
     window.loadFeatures1 = function(response) {
- 	   
- 	   
- 	 // alert('layer:'+JSON.stringify(response.features[0].properties.layer));
- 	  
- 	 //alert('Layer:'+JSON.stringify(response.features[0].properties.Layer));
     	var layerName = "";
     	if(typeof response.features[0].properties.layer !== "undefined"){
-
     		layerName = response.features[0].properties.layer.trim()+"_webview";
     	} else {
-    		//alert(JSON.stringify(response.features[0].properties.Layer));
     		layerName = response.features[0].properties.Layer.trim()+"_webview";
     	}
-
-    	//alert("L:"+layerName+"|");
     	glLayerSources[layerName.toLowerCase()].addFeatures(geojsonFormat.readFeatures(response));
     	//vectorSource_wells.addFeatures(geojsonFormat.readFeatures(response));
     };
@@ -51,24 +42,28 @@ $( document ).ready(function() {
 				
 				
 				mapLayers.set(layerName, layer);
+				
+				var imgVisible = "images/icons/layer-layer-on.png";
+				if(!layer.webVisible){
+					imgVisible = "images/icons/layer-layer-off.png";
+				}
 								
-				$('<div class="layer" style=" margin:15px; border:0px solid #000900;height:150px;width:400px;">').append(
+				$('<div class="layer" style=" margin:15px; border:0px solid #000900;">').append(
 					$('<input type="checkbox">').html(layer.layerName),
-					$('<label>').text(layer.layerName),
-					$('<input data-layerId="'+layerName.toLowerCase()+'"  type="image" src="images/icons/layer-layer-on.png" >').text('&nbsp;&nbsp;'),
+					'&nbsp;&nbsp;&nbsp;',
+					$('<label>').text(layer.layerName),'<br />',
+					$('<input data-layerId="'+layerName.toLowerCase()+'"  type="image" src="'+imgVisible+'" >').text('&nbsp;&nbsp;'),
+					'&nbsp;&nbsp;&nbsp;',
 					$('<input data-layerId="'+layerName.toLowerCase()+'"  type="image" src="images/icons/layer-labels-on.png" >').text(' '),
+					'&nbsp;&nbsp;&nbsp;',
 					$('<input data-layerId="'+layerName.toLowerCase()+'"  type="image" src="images/icons/layer-wms-on.png" >').text('&nbsp;&nbsp;'),
+					'&nbsp;&nbsp;&nbsp;',
 					$('<input  type="image" src="images/icons/layer-legend-on.png" >').text('  '),
-					$('<canvas class="layerCanvas'+i+'" style="width="100px";height=100px; margin:5px; border:1px solid #000900;">')
+					$('<p><canvas class="layerCanvas'+i+'" style="width:150px;height:50px; margin:5px; border:0px;"></p>')
 			    	    // add a cell to the row with the todo title
 			    	    // and another cell with the due date
 				).appendTo('#layersDiv');
-					 
-					 //var canvas = document.getElementsByTagName('canvas')[0];
-					 //canvas.width  = 300;
-					 //canvas.height = 100;
-				
-			    	  
+						    	  
 			    var vectorSource_wells = new ol.source.Vector({
 			    	loader: function(extent, resolution, projection) {
 			             var url = 'http://192.168.1.162:8080/geoserver/cite/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=cite:'+layer.geoServerLayerName+'&maxFeatures=600000&outputFormat=text/javascript&format_options=callback:loadFeatures1';
@@ -102,22 +97,16 @@ $( document ).ready(function() {
 				if(layerName.toLowerCase()=="wells_eom_wgs84_webview" ||
 						layerName.toLowerCase()== 'fields_wgs84_webview'){
 					map.addLayer(wmsSource);
-				}else {
-				       
+				} else {
 					map.addLayer(vector);
 				}
-						 
-					// map.addLayer(new ol.layer.Vector({
-					//     source: vectorSource
-					//}));
 					 
-					 
-					  var ctx = $(".layerCanvas"+i)[0].getContext("2d");
-					  ctx.moveTo(0,0);
-					  
-					  ctx.fillStyle = "#"+layer.color;
-					  ctx.fillRect(0,0,50,30);
-			    	     // alert('layer'+$('#layersDiv').html());
+				var ctx = $(".layerCanvas"+i)[0].getContext("2d");
+				//ctx.moveTo(0,0);
+				ctx.fillStyle = "#"+layer.color;
+				ctx.fillRect(0,0,90,50);
+
+				//ctx.fillRect(0,60,90,50);
 			});
 
 			$( ".layer" ).find( 'input' ).click(function() {
@@ -162,17 +151,16 @@ $( document ).ready(function() {
 					map.addLayer(glLayersCluster[$(this).attr('data-layerId')]);
 				}
 			});
-					
-				//  ctx.stroke();
-				  
 		}); 
 		
 		//map.removeLayer(vectorLayers["fields_wgs84_webview"]);
 		//map.addLayer(glWMSLayerSources["fields_wgs84_webview"]); 
 	});
+	////////////////////////////////////// end loading layers //////////////////////////////////////
 	
 	
-	 var getStyle = function(feature, resolution){
+	
+	var getStyle = function(feature, resolution){
 
 		// alert(feature.getProperties());
 		// alert(feature.getProperties().LookupColour+"]");
