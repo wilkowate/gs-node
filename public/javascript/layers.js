@@ -1,4 +1,6 @@
- $( document ).ready(function() {
+mapLayers = new Map();
+
+$( document ).ready(function() {
 
 	glLayerSources = [];
 	//glLayersCluster = [];
@@ -47,6 +49,9 @@
 				var layerName = layer.layerName+"_webview";
 				layerIds.push(layerName.toLowerCase());
 				
+				
+				mapLayers.set(layerName, layer);
+								
 				$('<div class="layer" style=" margin:15px; border:0px solid #000900;height:150px;width:400px;">').append(
 					$('<input type="checkbox">').html(layer.layerName),
 					$('<label>').text(layer.layerName),
