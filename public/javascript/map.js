@@ -134,62 +134,63 @@ var canvas = document.createElement('canvas');
        });
        
 /////////////////////// google map: //////////////////////////////////////////////  
-       var gmap = new google.maps.Map(document.getElementById('gmap'), {
-    	   disableDefaultUI: true,
-    	   keyboardShortcuts: false,
-    	   draggable: false,
-    	   disableDoubleClickZoom: true,
-    	   scrollwheel: false,
-    	   streetViewControl: false
-    	 });
-
-    	 var view = new ol.View({
-    	   // make sure the view doesn't go beyond the 22 zoom levels of Google Maps
-    	   maxZoom: 21
-    	 });
-    	 view.on('change:center', function() {
-    	   var center = ol.proj.transform(view.getCenter(), 'EPSG:3857', 'EPSG:4326');
-    	   gmap.setCenter(new google.maps.LatLng(center[1], center[0]));
-    	 });
-    	 view.on('change:resolution', function() {
-    	   gmap.setZoom(view.getZoom());
-    	 });
-
-    	 var olMapDiv = document.getElementById('olmap');
-    	  map = new ol.Map({
-    	   layers: [vector],
-    	   interactions: ol.interaction.defaults({
-    	     altShiftDragRotate: false,
-    	     dragPan: false,
-    	     rotate: false
-    	   }).extend([new ol.interaction.DragPan({kinetic: null})]),
-    	   target: olMapDiv,
-    	   view: view
-    	 });
-    	 view.setCenter([0, 0]);
-    	 view.setZoom(1);
-
-    	 olMapDiv.parentNode.removeChild(olMapDiv);
-    	 gmap.controls[google.maps.ControlPosition.TOP_LEFT].push(olMapDiv);
+//       var gmap = new google.maps.Map(document.getElementById('gmap'), {
+//    	   disableDefaultUI: true,
+//    	   keyboardShortcuts: false,
+//    	   draggable: false,
+//    	   disableDoubleClickZoom: true,
+//    	   scrollwheel: false,
+//    	   streetViewControl: false
+//    	 });
+//
+//    	 var view = new ol.View({
+//    	   // make sure the view doesn't go beyond the 22 zoom levels of Google Maps
+//    	   maxZoom: 21,
+//    	   projection: 'EPSG:4326'
+//    	 });
+//    	 view.on('change:center', function() {
+//    	   var center = ol.proj.transform(view.getCenter(), 'EPSG:3857', 'EPSG:4326');
+//    	   gmap.setCenter(new google.maps.LatLng(center[1], center[0]));
+//    	 });
+//    	 view.on('change:resolution', function() {
+//    	   gmap.setZoom(view.getZoom());
+//    	 });
+//
+//    	 var olMapDiv = document.getElementById('olmap');
+//    	  map = new ol.Map({
+//    	   layers: [vector],
+//    	   interactions: ol.interaction.defaults({
+//    	     altShiftDragRotate: false,
+//    	     dragPan: false,
+//    	     rotate: false
+//    	   }).extend([new ol.interaction.DragPan({kinetic: null})]),
+//    	   target: olMapDiv,
+//    	   view: view
+//    	 });
+//    	 view.setCenter([0, 0]);
+//    	 view.setZoom(1);
+//
+//    	 olMapDiv.parentNode.removeChild(olMapDiv);
+//    	 gmap.controls[google.maps.ControlPosition.TOP_LEFT].push(olMapDiv);
     	 
 /////////////////////// end google map //////////////////////////////////////////////      	 
     	    
 /////////////////////// OSM: //////////////////////////////////////////////    	 
-//         map = new ol.Map({
-//     	    target: 'map',
-//     	    layers: [
-//     	      new ol.layer.Tile({
-//     	            source: new ol.source.OSM()
-//     	        }),
-//
-//     	    ],
-//     	    view: new ol.View({
-//     	      projection: 'EPSG:4326',
-//     	      center: [50, 50],
-//     	      zoom: 3,
-//     	      maxResolution: 0.703125
-//     	    }) 
-//      })
+         map = new ol.Map({
+     	    target: 'map',
+     	    layers: [
+     	      new ol.layer.Tile({
+     	            source: new ol.source.OSM()
+     	        }),
+
+     	    ],
+     	    view: new ol.View({
+     	      projection: 'EPSG:4326',
+     	      center: [50, 50],
+     	      zoom: 4,
+     	      maxResolution: 0.703125
+     	    }) 
+      })
 /////////////////////// end OSM //////////////////////////////////////////////      	 
     	 
     	 
@@ -215,22 +216,52 @@ var canvas = document.createElement('canvas');
        var extent = dragBox.getGeometry().getExtent();
        
        vector.setVisible(false);
-
-       glLayerSources["wells_eom_wgs84_webview"].forEachFeatureIntersectingExtent(extent, function(feature) {
-    	   selectedFeatures.push(feature);
-       });
        
-       glWMSLayerSources["wells_eom_wgs84_webview"].forEachFeatureIntersectingExtent(extent, function(feature) {
-           selectedFeatures.push(feature);
-       });
+       map.getLayers().forEach(function(el) {
+    	   var keys = [];
+    	   for(var k in glWMSLayerSources) keys.push(k);
+    	   alert("total " + keys.length + " keys: " + keys);
+      	})
+      	
+       for (let key of mapLayers.keys()) {
+          console.log(key);
+          alert(key+" vis "+sessionStorage.getItem("visLayer"+key));
+          
+          if(sessionStorage.getItem("visLayer"+key)=="1"){
+        	  if(sessionStorage.getItem("layerType"+key)=="vector"){
+        	       glLayerSources[key].forEachFeatureIntersectingExtent(extent, function(feature) {
+        	    	   selectedFeatures.push(feature);
+        	       });
+        	  } else if(sessionStorage.getItem("layerType"+key)=="wms"){
+        		  
+        		  //alert(key+"mm"+sessionStorage.getItem(glWMSLayerSources[key]));
+        		  
+        		 // glLayerSources[key].forEachFeatureIntersectingExtent(extent, function(feature) {
+        	    //	   selectedFeatures.push(feature);
+        	    //   });
+        	  }
+        	  
+          }
+      }
+      	
+      	
        
-       glLayerSources["fields_wgs84_webview"].forEachFeatureIntersectingExtent(extent, function(feature) {
-           selectedFeatures.push(feature);
-       });
-       
-       glLayerSources["basins_webview"].forEachFeatureIntersectingExtent(extent, function(feature) {
-           selectedFeatures.push(feature);
-       });
+//
+//       glLayerSources["wells_eom_wgs84_webview"].forEachFeatureIntersectingExtent(extent, function(feature) {
+//    	   selectedFeatures.push(feature);
+//       });
+//       
+//       glWMSLayerSources["wells_eom_wgs84_webview"].forEachFeatureIntersectingExtent(extent, function(feature) {
+//           selectedFeatures.push(feature);
+//       });
+//       
+//       glLayerSources["fields_wgs84_webview"].forEachFeatureIntersectingExtent(extent, function(feature) {
+//           selectedFeatures.push(feature);
+//       });
+//       
+//       glLayerSources["basins_webview"].forEachFeatureIntersectingExtent(extent, function(feature) {
+//           selectedFeatures.push(feature);
+//       });
        
      });
 
