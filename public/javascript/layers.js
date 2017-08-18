@@ -17,6 +17,7 @@ $( document ).ready(function() {
     	} else {
     		layerName = response.features[0].properties.Layer.trim()+"_webview";
     	}
+    	//alert('layerName'+layerName);
     	glLayerSources[layerName.toLowerCase()].addFeatures(geojsonFormat.readFeatures(response));
     	//vectorSource_wells.addFeatures(geojsonFormat.readFeatures(response));
     };
@@ -41,20 +42,29 @@ $( document ).ready(function() {
 				layerIds.push(layerName.toLowerCase());
 				
 				
-				mapLayers.set(layerName, layer);
+				mapLayers.set(layerName.toLowerCase(), layer);
 				
 				var imgVisible = "images/icons/layer-layer-on.png";
+				sessionStorage.setItem("visLayer"+layerName.toLowerCase(),"1");
 				if(!layer.webVisible){
 					imgVisible = "images/icons/layer-layer-off.png";
+					sessionStorage.setItem("visLayer"+layerName.toLowerCase(),"0");
+				}
+				
+				var imgLabelsVisible = "images/icons/layer-labels-on.png";
+				sessionStorage.setItem("visLabels"+layerName.toLowerCase(),"1");
+				if(!layer.labelsVisible){
+					sessionStorage.setItem("visLabels"+layerName.toLowerCase(),"0");
+					imgLabelsVisible = "images/icons/layer-labels-off.png";
 				}
 								
 				$('<div class="layer" style=" margin:5px; border:0px solid #000900;">').append(
-					$('<input type="checkbox">').html(layer.layerName),
+					$('<input data-layerId="'+layerName.toLowerCase()+'" type="checkbox">').html(layer.layerName),
 					'&nbsp;&nbsp;&nbsp;',
 					$('<label>').text(layer.layerName),'<br />',
 					$('<input data-layerId="'+layerName.toLowerCase()+'"  type="image" src="'+imgVisible+'" >').text('&nbsp;&nbsp;'),
 					'&nbsp;&nbsp;&nbsp;',
-					$('<input data-layerId="'+layerName.toLowerCase()+'"  type="image" src="images/icons/layer-labels-on.png" >').text(' '),
+					$('<input data-layerId="'+layerName.toLowerCase()+'"  type="image" src="'+imgLabelsVisible+'" >').text(' '),
 					'&nbsp;&nbsp;&nbsp;',
 					$('<input data-layerId="'+layerName.toLowerCase()+'"  type="image" src="images/icons/layer-wms-on.png" >').text('&nbsp;&nbsp;'),
 					'&nbsp;&nbsp;&nbsp;',
@@ -66,7 +76,7 @@ $( document ).ready(function() {
 						    	  
 			    var vectorSource_wells = new ol.source.Vector({
 			    	loader: function(extent, resolution, projection) {
-			             var url = 'http://192.168.1.162:8080/geoserver/cite/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=cite:'+layer.geoServerLayerName+'&maxFeatures=600000&outputFormat=text/javascript&format_options=callback:loadFeatures1';
+			             var url = 'http://192.168.1.162:8080/geoserver/cite/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=cite:'+layer.geoServerLayerName+'&maxFeatures=60&outputFormat=text/javascript&format_options=callback:loadFeatures1';
 			             // use jsonp: false to prevent jQuery from adding the "callback" parameter to the URL
 			             $.ajax({url: url, dataType: 'jsonp', jsonp: false});
 			           },
@@ -94,12 +104,16 @@ $( document ).ready(function() {
 				       
 				vectorLayers[layerName.toLowerCase()] = vector;
 				
-				if(layerName.toLowerCase()=="wells_eom_wgs84_webview" ||
-						layerName.toLowerCase()== 'fields_wgs84_webview'){
-					map.addLayer(wmsSource);
-				} else {
-					map.addLayer(vector);
-				}
+				//if(layer.webVisible){
+					//alert(layer.wmsVisibilityZoomLevel);
+					if(layer.wmsVisibilityZoomLevel > 0){
+						map.addLayer(wmsSource);
+						sessionStorage.setItem("layerType"+layerName.toLowerCase(),"wms");
+					} else {
+						map.addLayer(vector);
+						sessionStorage.setItem("layerType"+layerName.toLowerCase(),"vector");
+					}
+				//}
 					 
 				var ctx = $(".layerCanvas"+i)[0].getContext("2d");
 				//ctx.moveTo(50,50);
@@ -113,6 +127,12 @@ $( document ).ready(function() {
 			});
 
 			$( ".layer" ).find( 'input' ).click(function() {
+				
+				if($(this).attr('type')=='checkbox'){
+					//alert($(this).attr('checked'));
+					sessionStorage.setItem("selectedLayer"+$(this).attr('data-layerId'),"1");
+				} 
+				
 				if($(this).attr('src')=='images/icons/layer-layer-off.png'){
 					$(this).attr('src','images/icons/layer-layer-on.png');
 					vectorLayers[$(this).attr('data-layerId')].setVisible(true);
@@ -128,9 +148,13 @@ $( document ).ready(function() {
 				if($(this).attr('src')=='images/icons/layer-labels-off.png'){
 					$(this).attr('src','images/icons/layer-labels-on.png');
 					sessionStorage.setItem("visLabels"+$(this).attr('data-layerId'),"1");
+					vectorLayers[$(this).attr('data-layerId')].changed();
+					
+					
 				} else if($(this).attr('src')=='images/icons/layer-labels-on.png'){
 					$(this).attr('src','images/icons/layer-labels-off.png');
 					sessionStorage.setItem("visLabels"+$(this).attr('data-layerId'),"0");
+					vectorLayers[$(this).attr('data-layerId')].changed();
 				}
 				
 				if($(this).attr('src')=='images/icons/layer-wms-off.png'){
@@ -147,11 +171,11 @@ $( document ).ready(function() {
 					//alert('removecluser');
 					$(this).attr('src','images/icons/layer-legend-on.png');
 					map.addLayer(vectorLayers[$(this).attr('data-layerId')]);
-					map.removeLayer(glLayersCluster[$(this).attr('data-layerId')]);
+					//map.removeLayer(glLayersCluster[$(this).attr('data-layerId')]);
 				} else if($(this).attr('src')=='images/icons/layer-legend-on.png'){
 					$(this).attr('src','images/icons/layer-legend-off.png');
 					map.removeLayer(vectorLayers[$(this).attr('data-layerId')]);
-					map.addLayer(glLayersCluster[$(this).attr('data-layerId')]);
+					//map.addLayer(glLayersCluster[$(this).attr('data-layerId')]);
 				}
 			});
 		}); 
@@ -164,9 +188,6 @@ $( document ).ready(function() {
 	
 	
 	var getStyle = function(feature, resolution){
-
-		// alert(feature.getProperties());
-		// alert(feature.getProperties().LookupColour+"]");
 		var hexColor = "#"+feature.getProperties().LookupColour;
 		var color = ol.color.asArray(hexColor);
 		color = color.slice();
@@ -195,9 +216,6 @@ $( document ).ready(function() {
 			 }
 		}();
 		
-		 
-		  
-		  // alert('vis '+vis);
 		var polygonStyles = [
 		     new ol.style.Style({
 		    	 fill: new ol.style.Fill({color: color}),
