@@ -10,8 +10,6 @@ var db = require('./database.js');
 var tableName = '';
 var columnName = '';
 var type = '';
-
-
 var docTypeId = 0;
 
 function DocTypeAttr(docTypeId){
@@ -48,7 +46,7 @@ function loadDocTypes(done,connection) {
 	var docTypes = [];
 	
 	var query = "SELECT TableName,ColumnName, Type FROM tableColumns WHERE Active = 1 ";
-	
+	query += " AND TableName LIKE '%Document%'";
 	//query += " ORDER BY Name OFFSET "+iDisplayStart+" ROWS FETCH NEXT "+iDisplayLength+" ROWS ONLY";
 	console.log(query + ' query');
 
@@ -62,14 +60,14 @@ function loadDocTypes(done,connection) {
 			
 			resultData.forEach((value, key) => {
 				var obj = new Object();
-				console.log("key:"+key+" "+JSON.stringify(value));
+			//	console.log("key:"+key+" "+JSON.stringify(value));
 				obj.key = key;
 				obj.value = JSON.stringify(value);
 				datares.push(obj);
 			})
 			
 			var res1 = {"data":datares};
-		    console.log("aJSON:"+res1);
+		   // console.log("aJSON:"+res1);
 		    done(null,res1);
 		    console.log(rowCount + ' rows');
 	    }
@@ -87,6 +85,8 @@ function loadDocTypes(done,connection) {
 				doc.columnName = column.value;
 			} else if(column.metadata.colName == 'Type'){
 				doc.type = column.value;
+			} else if(column.metadata.colName == DOC_TYPE_ID){
+				doc.docTypeId = column.value;
 			} else {
 				// console.log('n: '+column.metadata.colName);
 			//	doc.name = column.value;
