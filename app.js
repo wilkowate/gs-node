@@ -11,6 +11,7 @@ var documents = require('./controllers/documents');
 var mapObjects = require('./controllers/mapObjects');
 var categories = require('./controllers/categories');
 var layers = require('./controllers/layers');
+var docProcessor = require('./controllers/docProcessor');
 
 var app = express();
 
@@ -32,6 +33,8 @@ app.use('/documents', documents);
 app.use('/mapObjects', mapObjects);
 app.use('/categories', categories);
 app.use('/layers', layers);
+app.use('/docProcessor', docProcessor);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
