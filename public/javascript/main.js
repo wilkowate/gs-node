@@ -1,7 +1,5 @@
-
 	 	
 var showObjects =  function() {
-
     var oTable = $('#mapObjects').dataTable( {
         "bProcessing": true,
         "sAjaxSource": "/mapObjects/search",
@@ -9,10 +7,8 @@ var showObjects =  function() {
         "aoColumns": [
             { "mData": "layerName" },
             { "mData": "object" }
-
         ]
     } );
-	
 };
 	 	
 	 	
@@ -24,28 +20,31 @@ var showObjects =  function() {
 	 $('#left_top_panel').resizable({
 		  handles: 'n, e, s, w, ne, se, sw, nw',
 		  alsoResizeReverse: '#right_top_panel'
-		});
+	 });
 
-		$('#left_bottom_panel').resizable({
-		  handles: 'e',
-		  alsoResizeReverse: '#right_bottom_panel'
-		});
+	 $('#left_bottom_panel').resizable({
+		 handles: 'e',
+		 alsoResizeReverse: '#right_bottom_panel'
+	 });
 		
 	 sessionStorage.setItem('selecteCatId',617);
 	 
-     var oTable = $('#docs').dataTable( {
-         "bProcessing": true,
-         "sAjaxSource": "/documents/search",
-         "bServerSide": true,
-         "aoColumns": [
-             { "mData": "name" },
-             { "mData": "id" }
-
-         ]
-     } );
-
-
-	 
+	 $("#fireDocSearchBtn").on("click", function() {
+		 
+		 var oTable = $('#docs').dataTable( {
+ 	     "bProcessing": true,
+ 	     "sAjaxSource": "/documents/search",
+ 	     "fnServerParams": function ( aoData ) {
+            aoData.push( { "name": "DOC_SEARCH_DIALOG_COMMON_FORM", "value": docCommonDlgSP } );
+         },
+       // "fnServerParams": paramsArray,
+ 	     "bServerSide": true,
+ 	     "aoColumns": [
+ 	                   { "mData": "name" },
+ 	                   { "mData": "id" }
+ 	                   ]
+		 } );
+	 });
 	 
      $("#categories_table tbody").on("mousedown", "tr", function() {
 
