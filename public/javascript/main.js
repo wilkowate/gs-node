@@ -29,13 +29,20 @@ var showObjects =  function() {
 		
 	 sessionStorage.setItem('selecteCatId',617);
 	 
-	 $("#fireDocSearchBtn").on("click", function() {
-		 
-		 var oTable = $('#docs').dataTable( {
+	  oTable = $('#docs').dataTable( {
  	     "bProcessing": true,
  	     "sAjaxSource": "/documents/search",
  	     "fnServerParams": function ( aoData ) {
-            aoData.push( { "name": "DOC_SEARCH_DIALOG_COMMON_FORM", "value": docCommonDlgSP } );
+ 	    	 alert("fnServerParams"+typeof docCommonDlgSP);
+ 			 var sa = [];
+ 			 var obj = new Object();
+ 			 if(typeof docCommonDlgSP !== "undefined"){
+ 				 obj.searchParamName = "DOC_SEARCH_DIALOG_COMMON_FORM";
+ 				 obj.searchParamValue = docCommonDlgSP;
+ 				 sa.push(obj);
+ 			 }
+ 			 
+            aoData.push( { "name": "search_params", "value": sa } );
          },
        // "fnServerParams": paramsArray,
  	     "bServerSide": true,
@@ -44,6 +51,9 @@ var showObjects =  function() {
  	                   { "mData": "id" }
  	                   ]
 		 } );
+	 
+	 $("#fireDocSearchBtn").on("click", function() {
+		 oTable.fnDraw();
 	 });
 	 
      $("#categories_table tbody").on("mousedown", "tr", function() {
