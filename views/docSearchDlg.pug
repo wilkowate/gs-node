@@ -1,7 +1,7 @@
 <!-- Modal -->
 <div id="myModal" class="modal fade" role="dialog">
 
-<form id="searchform" > 
+ 
   <div class="modal-dialog">
 
     <!-- Modal content-->
@@ -11,22 +11,24 @@
         <h4 class="modal-title">Documents Search</h4>
       </div>
       <div class="modal-body">
-      
-      <p> Name: <input id="search" type="text"  ><br></p>
-        <p> Filename: <input id="search" type="text"  ><br></p>
-        <p> Doc Type: <select>
+     
+<form id="docCommonSearchForm" > 
+ <p> Name: <input name="DocName"  type="text"  ><br></p>
+ <p> Filename: <input name="Filename" type="text"  ><br></p>
+ <p> Doc Type: <select>
   <option value="type1">type 1</option>
   <option value="saab">type 2</option>
   <option value="mercedes">type 3</option>
   <option value="audi">type 4</option>
-</select></p>
+ </select></p>
 
-
+</form>
   
   <div class="panel panel-default">
   <div class="panel-heading">Doc types</div>
     <div class="panel-body">
     
+<form id="docTypesSearchForm" >
 
 <ul id="tabNames" class="nav nav-tabs">
 
@@ -37,18 +39,17 @@
 <div id="tabContent" class="tab-content">
 
 <div id="doc2" class="tab-pane fade">
-<p> </p>
   <p> Name: <input value="" type="text"  ><br></p>
   <p> Type: <input value="" type="text"  ><br></p>
   <p> Size: <input value="" type="text"  ><br></p>
   <p> Col1: <input value="" type="text"  ><br></p>
   <p> Col2: <input value="" type="text"  > : <input id="search" type="text"  ></p>
   <p> Search: <input value="" type="text"  ><br></p>
-
 </div>
 
 </div>
 
+</form>
 
 </div>
 
@@ -58,11 +59,11 @@
  </div>
    <div class="modal-footer">
  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
- <input  type="submit"  >
+ <button id="applySearchCriteria" type="button" class="btn btn-default" data-dismiss="modal">Submit</button>
  </div>
 </div>
 </div>
 
-</form>
+
 
 </div>

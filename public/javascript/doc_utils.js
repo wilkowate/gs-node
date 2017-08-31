@@ -2,6 +2,9 @@ const DOC_TYPE_ID = "DocTypeID";
 const ACTIVE_LAYER_ID = "ActivelayerID";
 const SEP = "___";
 
+const DOC_SEARCH_DIALOG_COMMON_FORM = "DOC_SEARCH_DIALOG_COMMON_FORM";
+
+
 $( document ).ready(function() {
 	 
 	$(function() {
@@ -27,19 +30,46 @@ $( document ).ready(function() {
 			});
 		});
 	});
-
-	$("#searchform").on('submit',function(event){
-		event.preventDefault() ;
-		event.stopPropagation();
+	
+	
+	
+	$("#applySearchCriteria").on('click',function(event){
+		//event.preventDefault() ;
+		//event.stopPropagation();
+		docCommonDlgSP = [];
 		docSPDlg = [];
-		$("#searchform").find(':input').each(function(i) {
+		
+		$("#docCommonSearchForm").find(':input').each(function(i) {
+			if(this.value != ""){
+				var obj = { name: this.name};
+				obj.value = this.value;
+				docCommonDlgSP.push(obj);
+			}
+		});
+		
+		$("#docTypesSearchForm").find(':input').each(function(i) {
 			if(this.value != ""){
 				var obj = { name: this.name};
 				obj.value = this.value;
 				docSPDlg.push(obj);
 			}
 		});
+		
     //alert("Form Submission prevented / stoped. "+JSON.stringify(docSPDlg));
 	});
+
+//	$("#docTypesSearchForm").on('submit',function(event){
+//		event.preventDefault() ;
+//		event.stopPropagation();
+//		docSPDlg = [];
+//		$("#docTypesSearchForm").find(':input').each(function(i) {
+//			if(this.value != ""){
+//				var obj = { name: this.name};
+//				obj.value = this.value;
+//				docSPDlg.push(obj);
+//			}
+//		});
+//    //alert("Form Submission prevented / stoped. "+JSON.stringify(docSPDlg));
+//	});
 
 });
