@@ -101,14 +101,7 @@ function loadDocTypes(done,connection) {
 			
 			resultData.set(doc.tableName,[]);
 		}
-//			
-		console.log('dddddd:'+resultData.get(doc.tableName));
 		(resultData.get(doc.tableName)).push(doc);
-		
-		console.log('doc.tableName:'+doc.tableName);
-		
-		console.log(JSON.stringify(resultData.get(doc.tableName)));
-		
 	});
 	  
 	request.on('done', function (rowCount, more, rows) { 

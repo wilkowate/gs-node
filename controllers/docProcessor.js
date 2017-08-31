@@ -3,9 +3,9 @@ var express = require('express')
   , DocTypeAttr = require('./../models/docTypeAttr')
 
   router.get('/loadDocTypes',  function(req, res) {
-	 var id =1;
-	  console.log('loadDocTypesloadDocTypesloadDocTypes');
-	DocTypeAttr.get(id, function (err, layers) {
+	  var id =1;
+	  //console.log('loadDocTypesloadDocTypesloadDocTypes');
+	  DocTypeAttr.get(id, function (err, layers) {
 		  res.send(layers);
 	  })
 	})

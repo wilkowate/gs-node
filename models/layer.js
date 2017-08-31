@@ -44,7 +44,7 @@ exports.loadActiveLayers = function(id, done) {
  */
 function loadLayers(id,done,connection) {
 	
-	console.log(id + ' cat id');
+	//console.log(id + ' cat id');
 	
 	var resultData = [];
 	
@@ -60,7 +60,7 @@ function loadLayers(id,done,connection) {
 		    		"layers":resultData
 		    	  };
 		    
-		    console.log(JSON.stringify(resultData));
+		   // console.log(JSON.stringify(resultData));
 		    
 		    done(null,res1);
 	      console.log(rowCount + ' rows');
@@ -70,8 +70,8 @@ function loadLayers(id,done,connection) {
 
 	  request.on('row', function(columns) {
 		  var doc = new Layer(1);
-	    columns.forEach(function(column) {
-	    	console.log(column.metadata.colName);
+		  columns.forEach(function(column) {
+	    	//console.log(column.metadata.colName);
 	      if (column.value === null) {
 
 	      } else if(column.metadata.colName == 'Layer'){
