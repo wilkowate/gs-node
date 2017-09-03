@@ -33,15 +33,15 @@ var showObjects =  function() {
  	     "bProcessing": true,
  	     "sAjaxSource": "/documents/search",
  	     "fnServerParams": function ( aoData ) {
- 	    	 alert("fnServerParams"+typeof docCommonDlgSP);
+
  			 var sa = [];
  			 var obj = new Object();
  			 if(typeof docCommonDlgSP !== "undefined"){
- 				 obj.searchParamName = "DOC_SEARCH_DIALOG_COMMON_FORM";
- 				 obj.searchParamValue = docCommonDlgSP;
- 				 sa.push(obj);
+ 				 //obj.searchParamName = "DOC_SEARCH_DIALOG_COMMON_FORM";
+ 				 obj.DOC_SEARCH_DIALOG_COMMON_FORM = docCommonDlgSP;
+ 				 
  			 }
- 			 
+ 			sa.push(obj);
             aoData.push( { "name": "search_params", "value": sa } );
          },
        // "fnServerParams": paramsArray,
@@ -63,7 +63,6 @@ var showObjects =  function() {
     });
      
      $("#categories_table").on("onNodeExpand", function(){
-    	 alert('d');
          var node = this;
          var rowobject = node.row;
          // do some stuff with the row or ...
