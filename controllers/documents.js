@@ -17,8 +17,10 @@ var express = require('express')
 	  
 	 var iDisplayStart =req.query.iDisplayStart;
 	 var iDisplayLength =req.query.iDisplayLength;
+	 
+	 console.log('p: '+JSON.stringify(req.query.search_params));
 	  
-	  Document.get(req.params.id, iDisplayStart,iDisplayLength, function (err, document) {
+	  Document.get(req.query.search_params, iDisplayStart,iDisplayLength, function (err, document) {
 		  
 		  res.send(document);
 	    //res.render('comments/comment', {comment: document})
