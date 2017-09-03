@@ -38,6 +38,7 @@ var pageSize = 100;
 
 var pageStart = 0;
 
+var searchParamsArray = [];
 
 //add functionality to those variables:
 var pageNumber = 1;
@@ -53,12 +54,13 @@ const DOC_SEARCH_DIALOG_COMMON_FORM = "DOC_SEARCH_DIALOG_COMMON_FORM";
 /**
  * 
  */
-exports.get = function(id,iDisplayStart,iDisplayLength, done) {
+exports.get = function(search_params,iDisplayStart,iDisplayLength, done) {
 	var connection = db.getConnection();
 	
 	pageSize = iDisplayLength;
 	pageStart = iDisplayStart;
 	callbackDone = done;
+	searchParamsArray = search_params;
 	//pageNumber = (iDisplayLength)/pageSize;
 	
 	connection.on('connect', function(err) {
@@ -167,6 +169,30 @@ function createDocTypeTempTable( connection){
 	
 }
 
+/**
+ * 
+ */
+function createDocCommonTempTable( connection){
+	console.log("--- "+(new Date()).getHours()+":"+(new Date()).getMinutes()+' createDocCommonTempTable');
+	
+	 commonSearchInputTempTableName = "witemptestdocCommon";
+	
+	var sqlCreateTempTable = " if not exists (select * from sysobjects where name='"+commonSearchInputTempTableName;
+	sqlCreateTempTable += "' ) CREATE TABLE [" + commonSearchInputTempTableName;
+	sqlCreateTempTable += "] ( "+ " SearchField nvarchar(max),";
+	sqlCreateTempTable += " SearchFieldType nvarchar(10),";
+	sqlCreateTempTable += " SearchValue nvarchar(max),";
+	sqlCreateTempTable += " SearchFieldOrder tinyint )";
+	
+	request = new Request(sqlCreateTempTable, function(err, rowCount) {
+		if (err) {
+			console.log(err);
+		} else {
+			populateDocCommonTempTable( connection);
+		}
+	});
+	connection.execSql(request);
+}
 
 /**
  * 
@@ -175,11 +201,63 @@ function populateDocTypeTempTable( tempTableName, connection){
 	
 	console.log("2--- "+(new Date()).getHours()+":"+(new Date()).getMinutes()+' testarray'+docEditTempTable);
 	
-	
 	var q = "INSERT INTO " + tempTableName
 	+ " (SearchDocTypeID ,SearchField,SearchFieldType,SearchValue,SearchFieldOrder) VALUES (2,'v','b','kkb',1)";
+	q += "; INSERT INTO " + tempTableName
+	+ " (SearchDocTypeID ,SearchField,SearchFieldType,SearchValue,SearchFieldOrder) VALUES (21,'v','b','kkb',1)";
+	q += "; INSERT INTO " + tempTableName
+	+ " (SearchDocTypeID ,SearchField,SearchFieldType,SearchValue,SearchFieldOrder) VALUES (22,'v','b','kkb',1);";
 	console.log("query: " + q);
 	
+	if(typeof searchParamsArray !== "undefined"){
+	var docTypesArray = searchParamsArray[0].DOC_SEARCH_DIALOG_COMMON_FORM;
+	//$.each(docTypesArray, function(i, obj) {
+		
+	//});
+	console.log('docTypesArray'+docTypesArray);
+	}
+	request = new Request(q, function(err, rowCount) {
+		if (err) {
+			console.log(err);
+		} else {
+			var res1 = {
+				"draw": "1"
+		    };
+		    
+			createDocCommonTempTable(connection);
+			console.log(rowCount + ' rows');
+		}
+		//connection.close();
+	});
+	
+	
+	
+	connection.execSql(request);
+	
+}
+
+/**
+ * 
+ */
+function populateDocCommonTempTable( connection){
+	
+	console.log("--- "+(new Date()).getHours()+":"+(new Date()).getMinutes()+' populateDocCommonTempTable');
+	
+	var q = "INSERT INTO " + commonSearchInputTempTableName
+	+ " (SearchField,SearchFieldType,SearchValue,SearchFieldOrder) VALUES ('SearchFor','Text','postponement',0)";
+	
+	q += "INSERT INTO " + commonSearchInputTempTableName
+	+ " (SearchField,SearchFieldType,SearchValue,SearchFieldOrder) VALUES ('Include',NULL,'Name',0)";
+	
+	console.log("query: " + q);
+	
+	if(typeof searchParamsArray !== "undefined"){
+	var docTypesArray = searchParamsArray[0].DOC_SEARCH_DIALOG_COMMON_FORM;
+	//$.each(docTypesArray, function(i, obj) {
+		
+	//});
+	console.log('docTypesArray'+docTypesArray);
+	}
 	request = new Request(q, function(err, rowCount) {
 		if (err) {
 			console.log(err);
@@ -252,7 +330,7 @@ function executeMainSearchSP( connection){
 				
 				//console.log('n: '+column.metadata.colName);
 			} else if (column.metadata.colName === "Doc_Name") {
-				console.log('row '+column.value);
+				//console.log('row '+column.value);
 				doc.name = column.value;
 				
 			}
