@@ -12,20 +12,18 @@ var express = require('express')
 //  })
 //})
   
-  router.get('/search',  function(req, res) {
+router.get('/search',  function(req, res) {
 	  
-	  
-	 var iDisplayStart =req.query.iDisplayStart;
-	 var iDisplayLength =req.query.iDisplayLength;
+	var iDisplayStart =req.query.iDisplayStart;
+	var iDisplayLength =req.query.iDisplayLength;
+	var sEcho =req.query.sEcho;
 	 
-	 console.log('p: '+JSON.stringify(req.query.search_params));
+	console.log('p: '+JSON.stringify(req.query.search_params));
 	  
-	  Document.get(req.query.search_params, iDisplayStart,iDisplayLength, function (err, document) {
-		  
-		  res.send(document);
-	    //res.render('comments/comment', {comment: document})
-	  })
+	Document.get(req.query.search_params, iDisplayStart,iDisplayLength,sEcho, function (err, document) {
+		res.send(document);
 	})
+})
 
 //router.get('/:id', function(req, res) {
 //	Document.get(req.params.id, function (err, document) {
