@@ -28,6 +28,9 @@ $( document ).ready(function() {
 				});
 				$("#tabContent").append('</div>');
 			});
+			
+			$("#tabsPanel li:eq(1) a").tab('show');
+			//$('#tabsPanel').tab('show');
 		});
 	});
 	
