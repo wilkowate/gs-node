@@ -35,30 +35,27 @@ var includeItemsPresent = false;
 var userName = "irena";
 var sessionId = 0;
 var pageSize = 100;
-
 var pageStart = 0;
-
 var searchParamsArray = [];
 
 //add functionality to those variables:
 var pageNumber = 1;
 var sortByColumn = "Name";
 var documentTypeId = 1;
-
 var callbackDone;
-
+var sEcho1;
 //CONSTS:
 const DOC_SEARCH_DIALOG_COMMON_FORM = "DOC_SEARCH_DIALOG_COMMON_FORM";
-
 
 /**
  * 
  */
-exports.get = function(search_params,iDisplayStart,iDisplayLength, done) {
+exports.get = function(search_params,iDisplayStart,iDisplayLength,sEcho, done) {
 	var connection = db.getConnection();
 	
 	pageSize = iDisplayLength;
 	pageStart = iDisplayStart;
+	sEcho1 = sEcho;
 	callbackDone = done;
 	searchParamsArray = search_params;
 	//pageNumber = (iDisplayLength)/pageSize;
@@ -131,7 +128,14 @@ function createDocTypeTempTable( connection){
 	
 	console.log("1--- "+(new Date()).getHours()+":"+(new Date()).getMinutes()+' insertDocTypeTempTable');
 	
-	var tempTableName = "witemptestdoctypes";
+	
+	var text = "";
+	  var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+	  for (var i = 0; i < 5; i++)
+	    text += possible.charAt(Math.floor(Math.random() * possible.length));
+	  
+	docSearchInputTempTableName = "witemptestdoctypes"+text;
 	
 	//var sqlCreateTempTable = " if not exists (select * from sysobjects where name='"+tempTableName+"' ) CREATE TABLE [" + tempTableName;
 	//sqlCreateTempTable += "] ( "+ " SearchField nvarchar(max),";
@@ -140,7 +144,7 @@ function createDocTypeTempTable( connection){
 	//sqlCreateTempTable += " SearchFieldOrder tinyint )";
 	
 	
-	var sqlCreateTempTable = " if not exists (select * from sysobjects where name='"+tempTableName+"' ) CREATE TABLE [" + tempTableName;
+	var sqlCreateTempTable = " if not exists (select * from sysobjects where name='"+docSearchInputTempTableName+"' ) CREATE TABLE [" + docSearchInputTempTableName;
 	sqlCreateTempTable += "] ( SearchDocTypeID int,	";
 	sqlCreateTempTable += " SearchField nvarchar(max),";
 	sqlCreateTempTable += " SearchFieldType nvarchar(10),";
@@ -155,7 +159,7 @@ function createDocTypeTempTable( connection){
 				"draw": "1"
 		    };
 			console.log(' okokokokokok');
-			populateDocTypeTempTable(tempTableName, connection);
+			populateDocTypeTempTable(docSearchInputTempTableName, connection);
 			
 		}
 		//connection.close();
@@ -175,7 +179,7 @@ function createDocTypeTempTable( connection){
 function createDocCommonTempTable( connection){
 	console.log("--- "+(new Date()).getHours()+":"+(new Date()).getMinutes()+' createDocCommonTempTable');
 	
-	 commonSearchInputTempTableName = "witemptestdocCommon";
+	 commonSearchInputTempTableName = "witemptestdocCommon1";
 	
 	var sqlCreateTempTable = " if not exists (select * from sysobjects where name='"+commonSearchInputTempTableName;
 	sqlCreateTempTable += "' ) CREATE TABLE [" + commonSearchInputTempTableName;
@@ -201,21 +205,22 @@ function populateDocTypeTempTable( tempTableName, connection){
 	
 	console.log("2--- "+(new Date()).getHours()+":"+(new Date()).getMinutes()+' testarray'+docEditTempTable);
 	
-	var q = "INSERT INTO " + tempTableName
-	+ " (SearchDocTypeID ,SearchField,SearchFieldType,SearchValue,SearchFieldOrder) VALUES (2,'v','b','kkb',1)";
-	q += "; INSERT INTO " + tempTableName
-	+ " (SearchDocTypeID ,SearchField,SearchFieldType,SearchValue,SearchFieldOrder) VALUES (21,'v','b','kkb',1)";
-	q += "; INSERT INTO " + tempTableName
-	+ " (SearchDocTypeID ,SearchField,SearchFieldType,SearchValue,SearchFieldOrder) VALUES (22,'v','b','kkb',1);";
-	console.log("query: " + q);
+	var q = "";
 	
 	if(typeof searchParamsArray !== "undefined"){
-	var docTypesArray = searchParamsArray[0].DOC_SEARCH_DIALOG_COMMON_FORM;
-	//$.each(docTypesArray, function(i, obj) {
-		
-	//});
-	console.log('docTypesArray'+docTypesArray);
+		var docTypesArray = searchParamsArray[0].DOC_SEARCH_DIALOG_TYPE_FIELDS;
+		//$.each(docTypesArray, function(i, obj) {
+		for (var i = 0, len = docTypesArray.length; i < len; i++) {
+			obj = docTypesArray[0];
+			q += " INSERT INTO " + tempTableName
+			+ " (SearchDocTypeID ,SearchField,SearchFieldType,SearchValue,SearchFieldOrder) VALUES (" ;
+			q += obj.docTypeId + ",'"+obj.columnName+"','text','"+obj.value+"',0);";
+		}
+		console.log('docTypesArray'+docTypesArray);
 	}
+	
+	console.log("query: " + q);
+	
 	request = new Request(q, function(err, rowCount) {
 		if (err) {
 			console.log(err);
@@ -230,10 +235,11 @@ function populateDocTypeTempTable( tempTableName, connection){
 		//connection.close();
 	});
 	
-	
-	
-	connection.execSql(request);
-	
+	if(q.length > 0){
+		connection.execSql(request);
+	} else {
+		createDocCommonTempTable(connection);
+	}
 }
 
 /**
@@ -247,12 +253,12 @@ function populateDocCommonTempTable( connection){
 	+ " (SearchField,SearchFieldType,SearchValue,SearchFieldOrder) VALUES ('SearchFor','Text','postponement',0)";
 	
 	q += "INSERT INTO " + commonSearchInputTempTableName
-	+ " (SearchField,SearchFieldType,SearchValue,SearchFieldOrder) VALUES ('Include',NULL,'Name',0)";
+	+ " (SearchField,SearchFieldType,SearchValue,SearchFieldOrder) VALUES ('Include',NULL,'Named',0)";
 	
 	console.log("query: " + q);
 	
 	if(typeof searchParamsArray !== "undefined"){
-	var docTypesArray = searchParamsArray[0].DOC_SEARCH_DIALOG_COMMON_FORM;
+		var docTypesArray = searchParamsArray[0].DOC_SEARCH_DIALOG_COMMON_FORM;
 	//$.each(docTypesArray, function(i, obj) {
 		
 	//});
@@ -286,7 +292,6 @@ function executeMainSearchSP( connection){
 	
 	var data1 = [];
 	var draw = pageStart/pageSize + 1;
-	
 	console.log("3--- "+(new Date()).getHours()+":"+(new Date()).getMinutes()+' executeMainSearchSP  ');
 	
 	var countParam = 1;
@@ -304,10 +309,16 @@ function executeMainSearchSP( connection){
 		if (err) {
 			console.log(err);
 		} else {
+			
+			nrOfRecords = 0;
+			if(data1.length > 0){
+				nrOfRecords = data1.length;
+			}
 			var res1 = {
 					"draw": draw,
-					"iTotalRecords": "200",
+					"iTotalRecords": nrOfRecords,
 			    	"iTotalDisplayRecords": "200",
+			    	"sEcho": sEcho1,
 			    	"aaData":data1
 			    };
 			callbackDone(null,res1);
@@ -331,9 +342,12 @@ function executeMainSearchSP( connection){
 				//console.log('n: '+column.metadata.colName);
 			} else if (column.metadata.colName === "Doc_Name") {
 				//console.log('row '+column.value);
-				doc.name = column.value;
-				
-			}
+				doc.name = column.value.substring(0, 50);;
+			}	else if (column.metadata.colName === "Doc_ID") {
+					//console.log('row '+column.value);
+					doc.id = column.value;
+					
+				}
 		});
 		data1.push(doc);
 	});
