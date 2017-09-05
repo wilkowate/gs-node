@@ -3,7 +3,8 @@ const ACTIVE_LAYER_ID = "ActivelayerID";
 const SEP = "___";
 
 const DOC_SEARCH_DIALOG_COMMON_FORM = "DOC_SEARCH_DIALOG_COMMON_FORM";
-
+const DOC_SEARCH_DIALOG_TYPE_FIELDS = "DOC_SEARCH_DIALOG_TYPE_FIELDS";
+const DOC_SEARCH_DIALOG_GLOBAL_FIELDS = "DOC_SEARCH_DIALOG_GLOBAL_FIELDS";
 
 $( document ).ready(function() {
 	 
@@ -19,7 +20,16 @@ $( document ).ready(function() {
 				$("#tabNames").append('<li><a data-toggle="tab" href="#'+a[0].tableName+'">'+a[0].tableName+'</a></li>');
 				$("#tabContent").append('<div id="'+a[0].tableName+'" class="tab-pane fade in active pre-scrollable">');
 				$.each(a, function(j, type) {
-					$("#"+a[0].tableName).append('<p> '+type.columnName+': <input value="" name="'+type.docTypeId+SEP+type.columnName+'" type="text"  ><br></p>');
+					
+					var inputTxt = '<p> '+type.columnName+': <input value="" name="';
+					inputTxt += type.docTypeId+SEP+type.columnName+'"';
+					inputTxt += ' data-type="'+type.type+'"';
+					inputTxt += ' data-columnName="'+type.columnName+'"';
+					inputTxt += ' data-docTypeId="'+type.docTypeId+'"';
+					inputTxt += ' type="text"  ><br></p>';
+					
+					$("#"+a[0].tableName).append(inputTxt);
+					
 					var obj = new Object();
 					obj.type = type.type;
 					obj.tableName = type.tableName;
@@ -37,6 +47,8 @@ $( document ).ready(function() {
 	
 	
 	$("#applySearchCriteria").on('click',function(event){
+		
+		$("#fireDocSearchBtn").attr('src',"images/icons/DEV_SD_red.gif");
 		//event.preventDefault() ;
 		//event.stopPropagation();
 		docCommonDlgSP = [];
@@ -54,6 +66,8 @@ $( document ).ready(function() {
 			if(this.value != ""){
 				var obj = { name: this.name};
 				obj.value = this.value;
+				obj.columnName = this.getAttribute('data-columnName');
+				obj.docTypeId = this.getAttribute('data-docTypeId');
 				docSPDlg.push(obj);
 			}
 		});
