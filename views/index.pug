@@ -2,31 +2,24 @@ extends layout
 
 block content
 
+ <div class="pad0">
   include toolbar.pug
+ </div>
 
-  <div id="top_panel" class="row">
+  <div id="top_panel" class="row collapse in">
     <div id="left_top_panel" class="col-sm-3">
       include layers.pug
     </div>
   
   <div id="right_top_panel" class="col-sm-8">
-
-  <div class="container" >
-
-  <div id="demo" class="collapse in">
-
-  
-  <div class="panel panel-default">
-    <div class="panel-body">
       include map.pug
-    </div>
-    <div class="panel-footer">Panel Footer</div>
   </div>
   
-  </div> </div>
-  </div>
+
+  
   </div>
   
+
   
   <div class="row">
     <div id="left_bottom_panel" class="col-sm-3">
@@ -45,6 +38,8 @@ block content
   
   include docSearchDlg.pug
   
+  
+  include mapSearchDlg.pug
   
 
   script(type="text/javascript").
@@ -68,7 +63,7 @@ block content
              rowTxt += '<td>'+row.childDocsCounter+'</td>';
              
              rowTxt += '</tr>';
-              rowTxt += '</tr><tr data-tt-id="3333" data-tt-parent-id="'+row.id+'">';
+             rowTxt += '</tr><tr data-tt-id="3333" data-tt-parent-id="'+row.id+'">';
              rowTxt += '<td>..</td>';
              rowTxt += '<td></td>';
              rowTxt += '<td></td>';
