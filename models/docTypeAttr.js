@@ -19,16 +19,13 @@ function DocTypeAttr(docTypeId){
 /**
  * 
  */
-exports.get = function(id, done) {
-	
-	console.log(' getgetege');
-	
+exports.get = function(tableType, done) {
 	var connection = db.getConnection();
 	connection.on('connect', function(err) {
 		  if (err) {
 		    console.log(err);
 		  } else {
-			  loadDocTypes(done,connection);
+			  loadDocTypes(tableType, done,connection);
 		  }
 	});
 }
@@ -38,17 +35,19 @@ exports.get = function(id, done) {
  * @param done
  * @param connection
  */
-function loadDocTypes(done,connection) {
-	
-	console.log(' loadDocTypes');
-	
+function loadDocTypes(tableType, done,connection) {
+
 	var resultData = new Map();
 	var docTypes = [];
 	
 	var query = "SELECT TableName,ColumnName, Type FROM tableColumns WHERE Active = 1 ";
-	query += " AND TableName LIKE '%Document%'";
+	if(tableType === "Document"){
+		query += " AND TableName LIKE '%Document%'";
+	} else {
+		query += " AND TableName NOT LIKE '%Document%'";
+	}
 	//query += " ORDER BY Name OFFSET "+iDisplayStart+" ROWS FETCH NEXT "+iDisplayLength+" ROWS ONLY";
-	console.log(query + ' query');
+	//console.log(query + ' query');
 
 	
 	request = new Request(query, function(err, rowCount) {
@@ -69,7 +68,7 @@ function loadDocTypes(done,connection) {
 			var res1 = {"data":datares};
 		   // console.log("aJSON:"+res1);
 		    done(null,res1);
-		    console.log(rowCount + ' rows');
+		    //console.log(rowCount + ' rows');
 	    }
 		connection.close();
 	});
@@ -97,8 +96,6 @@ function loadDocTypes(done,connection) {
 		//resultData.push(doc);
 		
 		if(resultData.get(doc.tableName) == undefined){
-			
-			
 			resultData.set(doc.tableName,[]);
 		}
 		(resultData.get(doc.tableName)).push(doc);
