@@ -40,13 +40,13 @@ function loadDocTypes(tableType, done,connection) {
 	var resultData = new Map();
 	var docTypes = [];
 	
-	var query = "SELECT TableName,ColumnName, Type FROM tableColumns WHERE Active = 1 ";
+	var query = "SELECT TableName,ColumnName, Type, DocTypeID FROM tableColumns WHERE Active = 1 ";
 	if(tableType === "Document"){
 		query += " AND TableName LIKE '%Document%'";
 	} else {
 		query += " AND TableName NOT LIKE '%Document%'";
 	}
-	//query += " ORDER BY Name OFFSET "+iDisplayStart+" ROWS FETCH NEXT "+iDisplayLength+" ROWS ONLY";
+	query += " ORDER BY TableName  ";//+iDisplayStart+" ROWS FETCH NEXT "+iDisplayLength+" ROWS ONLY";
 	//console.log(query + ' query');
 
 	
@@ -74,7 +74,7 @@ function loadDocTypes(tableType, done,connection) {
 	});
 	  
 	request.on('row', function(columns) {
-		var doc = new DocTypeAttr(1);
+		var doc = new DocTypeAttr(3);
 		columns.forEach(function(column) {
 			
 			if (column.value === null) {
@@ -84,7 +84,7 @@ function loadDocTypes(tableType, done,connection) {
 				doc.columnName = column.value;
 			} else if(column.metadata.colName == 'Type'){
 				doc.type = column.value;
-			} else if(column.metadata.colName == DOC_TYPE_ID){
+			} else if(column.metadata.colName == 'DocTypeID'){
 				doc.docTypeId = column.value;
 			} else {
 				// console.log('n: '+column.metadata.colName);
