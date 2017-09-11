@@ -12,9 +12,11 @@ $( document ).ready(function() {
 		var parameters = { id:1 };
 		$.getJSON( '/docProcessor/loadDocTypes',parameters, function(data) {
 			//JSONObject json = new JSONObject(data.data);
-			populateSearchTabs("docSearchDlg",data);
-			
+			loadDocTypesCollection("docSearchDlg",data);
+			//addNewTab("docSearchDlg");
 			//first tab is selected:
+			registerDocSearchDlgEvents();
+
 			$("#tabsPanel li:eq(1) a").tab('show');
 		});
 	});
