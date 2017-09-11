@@ -29,20 +29,24 @@ var showObjects =  function() {
 		
 	 sessionStorage.setItem('selecteCatId',617);
 	 
-	  oTable = $('#docs').dataTable( {
- 	     "bProcessing": true,
- 	     "sAjaxSource": "/documents/search",
- 	     "fnServerParams": function ( aoData ) {
+	 oTable = $('#docs').DataTable( {
+		 "bProcessing": true,
+		 "sAjaxSource": "/documents/search",
+		 "fnServerParams": function ( aoData ) {
 
- 			 var sa = [];
- 			 var obj = new Object();
- 			 if(typeof docCommonDlgSP !== "undefined"){
- 				 //obj.searchParamName = "DOC_SEARCH_DIALOG_COMMON_FORM";
- 				 obj.DOC_SEARCH_DIALOG_COMMON_FORM = docCommonDlgSP;
- 				 
+			 var sa = [];
+			 var obj = new Object();
+			 if(typeof docCommonDlgSP !== "undefined"){
+				 obj.DOC_SEARCH_DIALOG_COMMON_FORM = docCommonDlgSP;
+				 sa.push(obj);
  			 }
- 			sa.push(obj);
-            aoData.push( { "name": "search_params", "value": sa } );
+			 
+			 if(typeof docSPDlg !== "undefined"){
+				 obj.DOC_SEARCH_DIALOG_TYPE_FIELDS = docSPDlg;
+				 sa.push(obj);
+			 }
+
+			 aoData.push( { "name": "search_params", "value": sa } );
          },
        // "fnServerParams": paramsArray,
  	     "bServerSide": true,
@@ -53,7 +57,8 @@ var showObjects =  function() {
 		 } );
 	 
 	 $("#fireDocSearchBtn").on("click", function() {
-		 oTable.fnDraw();
+		 $("#fireDocSearchBtn").attr('src',"images/icons/DEV_SD_green.png");		 
+		 oTable.draw(1);
 	 });
 	 
      $("#categories_table tbody").on("mousedown", "tr", function() {
@@ -67,7 +72,5 @@ var showObjects =  function() {
          var rowobject = node.row;
          // do some stuff with the row or ...
      }
-    );
-
-	 
+    ); 
  });
