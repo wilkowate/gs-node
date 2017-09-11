@@ -1,6 +1,14 @@
  $( document ).ready(function() {  
 	 
-
+     var mousePositionControl = new ol.control.MousePosition({
+         coordinateFormat: ol.coordinate.createStringXY(4),
+         projection: 'EPSG:4326',
+         // comment the following two lines to have the mouse position
+         // be placed within the map.
+         className: 'custom-mouse-position',
+         target: document.getElementById('info'),
+         undefinedHTML: '&nbsp;'
+       });
 	 
 var canvas = document.createElement('canvas');
      var context = canvas.getContext('2d');
@@ -178,6 +186,11 @@ var canvas = document.createElement('canvas');
 /////////////////////// OSM: //////////////////////////////////////////////    	 
          map = new ol.Map({
      	    target: 'map',
+     	   controls: ol.control.defaults({
+               attributionOptions: /** @type {olx.control.AttributionOptions} */ ({
+                 collapsible: false
+               })
+             }).extend([mousePositionControl]),
      	    layers: [
      	      new ol.layer.Tile({
      	            source: new ol.source.OSM()
@@ -220,27 +233,28 @@ var canvas = document.createElement('canvas');
        map.getLayers().forEach(function(el) {
     	   var keys = [];
     	   for(var k in glWMSLayerSources) keys.push(k);
-    	   alert("total " + keys.length + " keys: " + keys);
+    	   //alert("total " + keys.length + " keys: " + keys);
       	})
       	
        for (let key of mapLayers.keys()) {
-          console.log(key);
-          alert(key+" vis "+sessionStorage.getItem("visLayer"+key));
-          
+         // console.log(key);
+             
           if(sessionStorage.getItem("visLayer"+key)=="1"){
+        	  
         	  if(sessionStorage.getItem("layerType"+key)=="vector"){
-        	       glLayerSources[key].forEachFeatureIntersectingExtent(extent, function(feature) {
+        		   glLayerSources[key].forEachFeatureIntersectingExtent(extent, function(feature) {
+        	    	   var props = Object.keys(feature);
+        	    	   //alert(JSON.stringify(props)+"feature");
         	    	   selectedFeatures.push(feature);
         	       });
         	  } else if(sessionStorage.getItem("layerType"+key)=="wms"){
         		  
-        		  //alert(key+"mm"+sessionStorage.getItem(glWMSLayerSources[key]));
+        		 // alert(key+"mm"+sessionStorage.getItem(glWMSLayerSources[key]));
         		  
         		 // glLayerSources[key].forEachFeatureIntersectingExtent(extent, function(feature) {
         	    //	   selectedFeatures.push(feature);
         	    //   });
         	  }
-        	  
           }
       }
       	
@@ -251,15 +265,19 @@ var canvas = document.createElement('canvas');
 //    	   selectedFeatures.push(feature);
 //       });
 //       
-//       glWMSLayerSources["wells_eom_wgs84_webview"].forEachFeatureIntersectingExtent(extent, function(feature) {
-//           selectedFeatures.push(feature);
-//       });
+       glWMSLayerSources["wells_eom_wgs84_webview"].forEachFeatureIntersectingExtent(extent, function(feature) {
+    	   var props = Object.keys(feature);
+    	   alert(JSON.stringify(props)+"feature2");
+           selectedFeatures.push(feature);
+       });
 //       
 //       glLayerSources["fields_wgs84_webview"].forEachFeatureIntersectingExtent(extent, function(feature) {
 //           selectedFeatures.push(feature);
 //       });
 //       
 //       glLayerSources["basins_webview"].forEachFeatureIntersectingExtent(extent, function(feature) {
+//    	   var props = Object.keys(feature);
+//    	   alert(JSON.stringify(props)+"feature2");
 //           selectedFeatures.push(feature);
 //       });
        
@@ -276,6 +294,9 @@ var canvas = document.createElement('canvas');
        var names = selectedFeatures.getArray().map(function(feature) {
          return feature.get('Object');
        });
+       
+       alert(JSON.stringify(names)+"names");
+       
        if (names.length > 0) {
          infoBox.innerHTML = names.join(', ');
        } else {
@@ -290,7 +311,7 @@ var canvas = document.createElement('canvas');
              console.log('zoomend '+ghostZoom);
              
              for (let key of mapLayers.keys()) {
-            	    console.log(key);
+            	    console.log('layer: '+key);
             	    //alert(mapLayers.get(key).webLabelZoomLevel);
             	}
              
