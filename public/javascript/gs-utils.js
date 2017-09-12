@@ -1,6 +1,4 @@
 function loadDocTypesCollection(dlgName, data){			
-	//JSONObject json = new JSONObject(data.data);
-	
 	docTypesCollection = new Map();
 		
 	$.each(data.data, function(i, layer) {
@@ -8,6 +6,9 @@ function loadDocTypesCollection(dlgName, data){
 		//alert(i+'id '+a[0].docTypeId);
 		docTypesCollection.set(a[0].docTypeId+"d",a);
 		
+		if(a[0].docTypeId == 0){
+			addNewTab("docSearchDlg", 0);
+		}
 		
 		$(".docTypesCombo").append('<option value="'+a[0].docTypeId+'">'+a[0].tableName+'</option>');
 		

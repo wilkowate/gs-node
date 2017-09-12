@@ -30,11 +30,13 @@ $( document ).ready(function() {
 		//event.stopPropagation();
 		docCommonDlgSP = [];
 		docSPDlg = [];
+		docGlobalSPDlg = [];
 		
 		$("#docCommonSearchForm").find(':input').each(function(i) {
 			if(this.value != ""){
 				var obj = { name: this.name};
 				obj.value = this.value;
+				obj.sfOrder = this.getAttribute('data-sfOrder');
 				docCommonDlgSP.push(obj);
 			}
 		});
@@ -45,7 +47,12 @@ $( document ).ready(function() {
 				obj.value = this.value;
 				obj.columnName = this.getAttribute('data-columnName');
 				obj.docTypeId = this.getAttribute('data-docTypeId');
-				docSPDlg.push(obj);
+				obj.sfOrder = this.getAttribute('data-sfOrder');
+				if(obj.docTypeId == 0){
+					docGlobalSPDlg.push(obj);
+				} else {
+					docSPDlg.push(obj);
+				}
 			}
 		});
 		

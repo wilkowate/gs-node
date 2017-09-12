@@ -12,52 +12,42 @@
       </div>
       <div class="modal-body">
      
+  
 <form id="docCommonSearchForm" > 
- <p> Name: <input name="DocName"  type="text"  ><br></p>
- <p> Filename: <input name="Filename" type="text"  ><br></p>
- <p> Doc Type: <select>
-  <option value="type1">type 1</option>
-  <option value="saab">type 2</option>
-  <option value="mercedes">type 3</option>
-  <option value="audi">type 4</option>
- </select></p>
-
+ <p> SearchFor: <input name="SearchFor"  type="text"  ><br></p>
+  <p> Name: <input name="IncludeName"  type="checkbox" value="0" >
+  <span> FilePath:</span> <input name="IncludeFilePath"  type="checkbox"  >
+   <span> DD:</span> <input name="IncludeDD"  type="checkbox"  >
+   <span> Text:</span> <input name="IncludeText"  type="checkbox"  >
+  </p>
+ <p> File size: 
+   <select name="FileUnit"> 
+    <option value="B">B</option>
+    <option value="KB">KB</option>
+    <option value="MB">MB</option>
+    <option value="GB">GB</option>
+   </select>
+   <span>From:</span> 
+   <input name="FileSize" type="text" size="4" data-sfOrder="1" > 
+   <span>To:</span>  
+   <input name="FileSize" type="text" size="4" data-sfOrder="2" ></p>
+ <p> Doc Type: <select class="docTypesCombo"> </select></p>
 </form>
+
   
   <div class="panel panel-default">
-  <div class="panel-heading">Doc types</div>
+   <div class="panel-heading">Doc types</div>
     <div id="tabsPanel" class="panel-body">
-    
-<form id="docTypesSearchForm" >
-
-<ul class="nav nav-tabs tabNames">
-
- <li><a data-toggle="tab" href="#doc2">Doc Type 1</a></li>
-
-</ul>
-
-<div class="tab-content tabContent">
-
-<div id="doc2" class="tab-pane fade">
-  <p> Name: <input value="" type="text"  ><br></p>
-  <p> Type: <input value="" type="text"  ><br></p>
-  <p> Size: <input value="" type="text"  ><br></p>
-  <p> Col1: <input value="" type="text"  ><br></p>
-  <p> Col2: <input value="" type="text"  > : <input id="search" type="text"  ></p>
-  <p> Search: <input value="" type="text"  ><br></p>
+     <form id="docTypesSearchForm" >
+      <ul class="nav nav-tabs tabNames"></ul>
+      <div class="tab-content tabContent pad0"></div>
+     </form>
+    </div>
+   </div>
+   
 </div>
 
-</div>
-
-</form>
-
-</div>
-
-</div>
-
- 
- </div>
-   <div class="modal-footer">
+<div class="modal-footer">
  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
  <button id="applySearchCriteria" type="button" class="btn btn-default" data-dismiss="modal">Submit</button>
  </div>

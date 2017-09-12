@@ -1,29 +1,27 @@
     
 function registerDocSearchDlgEvents(){
 
-$("#docSearchDlg .closeTab").click(function () {
-    	alert("close");
-        //there are multiple elements which has .closeTab icon so close the tab whose close icon is clicked
-        var tabContentId = $(this).parent().attr("href");
-        $(this).parent().parent().remove(); //remove li of tab
-        $('#docSearchDlg a:last').tab('show'); // Select first tab
-        $(tabContentId).remove(); //remove respective tab content
+//$("#docSearchDlg .closeTab").click(function () {
+//    	alert("close");
+//        //there are multiple elements which has .closeTab icon so close the tab whose close icon is clicked
+//        var tabContentId = $(this).parent().attr("href");
+//        $(this).parent().parent().remove(); //remove li of tab
+//        $('#docSearchDlg a:last').tab('show'); // Select first tab
+//        $(tabContentId).remove(); //remove respective tab content
+//
+//    });
 
-    });
-
-$("#docSearchDlg .docTypesCombo").on('change',function () {
-	alert("docSearchDlg"+$(this).val());
-	addNewTab("docSearchDlg", $(this).val());
-
-});
+	$("#docSearchDlg .docTypesCombo").on('change',function () {
+		addNewTab("docSearchDlg", $(this).val());
+	});
 }
 
 function addNewTab(dlgName, typeName) {
 	var a = docTypesCollection.get(typeName+"d");
-	alert(JSON.stringify(a));
 	populateSearchTab("docSearchDlg", a);
+	var nr = $("#"+dlgName+" .tabNames li").length - 1;
+	$("#tabsPanel li:eq("+nr+") a").tab('show');
 }
-
 
 
 function populateSearchTab(dlgName, a){			
@@ -32,9 +30,14 @@ function populateSearchTab(dlgName, a){
 	
 	var tabId = a[0].docTypeId+"d";
 	
-	var tabHeader = '<li><a data-toggle="tab" href="#'+tabId;
-	tabHeader += '">'+'<button class="close closeTab" type="button" >×</button>';
-	tabHeader += a[0].tableName.substring(8)+'</a></li>';
+	var tabHeader = '<li><a data-toggle="tab" href="#'+tabId+'">';
+	
+	if(a[0].tableName.startsWith('Document')){
+		tabHeader += '<button class="close closeTab" type="button" >×</button>';
+		tabHeader += a[0].tableName.substring(8)+'</a></li>';
+	} else {
+		tabHeader += a[0].tableName+'</a></li>';
+	}
 	//tabHeader += '">'+a[0].tableName+'</a></li>';
 	
 	$("#"+dlgName+" .tabNames").append(tabHeader);
@@ -107,7 +110,7 @@ function registerCloseEvent(dlgName) {
        // $('#'+dlgName+' #tabsPanel a:last').tab('show'); // Select first tab
         $(tabContentId).remove(); //remove respective tab content
         
-        $("#tabsPanel li:eq(1) a").tab('show');
+        $("#tabsPanel li:eq(0) a").tab('show');
 
     });
 }
