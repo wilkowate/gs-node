@@ -40,14 +40,24 @@ function loadDocTypes(tableType, done,connection) {
 	var resultData = new Map();
 	var docTypes = [];
 	
-	var query = "SELECT TableName,ColumnName, Type, DocTypeID FROM tableColumns WHERE Active = 1 ";
+	var query = "SELECT tc.TableName, tc.ColumnName, tc.Type, tc.DocTypeID FROM tableColumns tc  ";
 	if(tableType === "Document"){
-		query += " AND TableName LIKE '%Document%'";
+		query += " WHERE tc.TableName LIKE '%GlobalDocFields_GS%'";
+
+    	query += " UNION ";
+    	query += " SELECT tc.TableName, tc.ColumnName, tc.Type, tc.DocTypeID FROM tableColumns tc  ";
+    	query += " left JOIN DocumentType dt ON dt.DocTypeID = tc.DocTypeID   ";
+    	query += " WHERE dt.ACTIVE = 1  AND tc.TableName LIKE '%Document%'  ";
+    	query += " ORDER BY tc.DocTypeID  ";
+    	
 	} else {
-		query += " AND TableName NOT LIKE '%Document%'";
+		query += " WHERE tc.TableName NOT LIKE '%Document%'";
+		query += " ORDER BY TableName  ";
 	}
-	query += " ORDER BY TableName  ";//+iDisplayStart+" ROWS FETCH NEXT "+iDisplayLength+" ROWS ONLY";
-	//console.log(query + ' query');
+	
+	query += "  ";
+	//+iDisplayStart+" ROWS FETCH NEXT "+iDisplayLength+" ROWS ONLY";
+	console.log(query + ' query');
 
 	
 	request = new Request(query, function(err, rowCount) {
@@ -66,17 +76,16 @@ function loadDocTypes(tableType, done,connection) {
 			})
 			
 			var res1 = {"data":datares};
-		   // console.log("aJSON:"+res1);
 		    done(null,res1);
-		    //console.log(rowCount + ' rows');
+		    console.log(rowCount + ' rows');
 	    }
 		connection.close();
 	});
 	  
 	request.on('row', function(columns) {
-		var doc = new DocTypeAttr(3);
+		var doc = new DocTypeAttr(0);
 		columns.forEach(function(column) {
-			
+			//console.log('column: '+column.metadata.colName);
 			if (column.value === null) {
 			} else if(column.metadata.colName == 'TableName'){
 				doc.tableName = column.value;
@@ -93,12 +102,13 @@ function loadDocTypes(tableType, done,connection) {
 			}
 		});
 		
+		console.log('doc: '+doc.docTypeId+" "+doc.columnName);
 		//resultData.push(doc);
 		
-		if(resultData.get(doc.tableName) == undefined){
-			resultData.set(doc.tableName,[]);
+		if(resultData.get(doc.docTypeId) == undefined){
+			resultData.set(doc.docTypeId,[]);
 		}
-		(resultData.get(doc.tableName)).push(doc);
+		(resultData.get(doc.docTypeId)).push(doc);
 	});
 	  
 	request.on('done', function (rowCount, more, rows) { 
