@@ -38,14 +38,17 @@ var showObjects =  function() {
 			 var obj = new Object();
 			 if(typeof docCommonDlgSP !== "undefined"){
 				 obj.DOC_SEARCH_DIALOG_COMMON_FORM = docCommonDlgSP;
-				 sa.push(obj);
+				// sa.push(obj);
  			 }
-			 
+			 if(typeof docGlobalSPDlg !== "undefined"){
+				 obj.DOC_SEARCH_DIALOG_GLOBAL_FIELDS = docGlobalSPDlg;
+				 //sa.push(obj);
+			 }
 			 if(typeof docSPDlg !== "undefined"){
 				 obj.DOC_SEARCH_DIALOG_TYPE_FIELDS = docSPDlg;
-				 sa.push(obj);
+				 
 			 }
-
+			 sa.push(obj);
 			 aoData.push( { "name": "search_params", "value": sa } );
          },
        // "fnServerParams": paramsArray,
