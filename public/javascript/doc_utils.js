@@ -32,14 +32,35 @@ $( document ).ready(function() {
 		docSPDlg = [];
 		docGlobalSPDlg = [];
 		
+		//////////////// common form ///////////////////////////////////
+		var include = false;
+		var searchForObj = {};
 		$("#docCommonSearchForm").find(':input').each(function(i) {
 			if(this.value != ""){
 				var obj = { name: this.name};
-				obj.value = this.value;
-				obj.sfOrder = this.getAttribute('data-sfOrder');
-				docCommonDlgSP.push(obj);
+				
+				if(this.name === 'SearchFor'){
+					searchForObj = { name: this.name};
+					searchForObj.value = this.value;
+				}
+				if(this.name.startsWith("Include")){
+				//	alert(this.name+' v '+this.value+" "+(this.value == "on")+"   :"+this.checked);
+					if(this.checked){
+						
+						obj = { name: this.name};
+						obj.value = this.value;
+						obj.sfOrder = this.getAttribute('data-sfOrder');
+						docCommonDlgSP.push(obj);
+						include = true;
+					}
+				}
 			}
 		});
+		if(include){
+			docCommonDlgSP.push(searchForObj);
+		}
+		//////////////// end common form ////////////////////
+		
 		
 		$("#docTypesSearchForm").find(':input').each(function(i) {
 			if(this.value != ""){
