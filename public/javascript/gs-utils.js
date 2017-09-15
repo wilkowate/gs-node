@@ -4,7 +4,7 @@ function loadDocTypesCollection(dlgName, data){
 	$.each(data.data, function(i, layer) {
 		var a = $.parseJSON(layer.value);
 		//alert(i+'id '+a[0].docTypeId);
-		docTypesCollection.set(a[0].docTypeId+"d",a);
+		docTypesCollection.set("docTypeTabId"+a[0].docTypeId,a);
 		
 		if(a[0].docTypeId == 0){
 			addNewTab("docSearchDlg", 0);

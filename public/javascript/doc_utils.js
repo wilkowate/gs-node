@@ -63,7 +63,25 @@ $( document ).ready(function() {
 		
 		
 		$("#docTypesSearchForm").find(':input').each(function(i) {
-			if(this.value != ""){
+			
+			//alert(this.type +"  "+ this.value+" n: "+this.name);
+			
+			if(this.value != "" && this.name != ""){
+				
+				
+				if(this.type === 'select-multiple'){
+					var list= this.selectedOptions;
+					alert('sel '+list + " n: "+this.name);
+					for (var i = 0; i < list.length; i++) {
+						alert('list '+list[i].value);
+					   // console.log(list[i].value); //second console output
+					}
+					//alert('sel '+this.type + " n: "+this.name);
+					//this.forEach(function( index ) {
+					//	  console.log( index + ": " + $( this ).text() );
+					//	});
+				}
+				
 				var obj = { name: this.name};
 				obj.value = this.value;
 				obj.columnName = this.getAttribute('data-columnName');

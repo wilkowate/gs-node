@@ -11,6 +11,7 @@ var tableName = '';
 var columnName = '';
 var type = '';
 var docTypeId = 0;
+var columns = ['faf','sff','lololo'];
 
 function DocTypeAttr(docTypeId){
 	this.docTypeId = docTypeId;
@@ -40,12 +41,12 @@ function loadDocTypes(tableType, done,connection) {
 	var resultData = new Map();
 	var docTypes = [];
 	
-	var query = "SELECT tc.TableName, tc.ColumnName, tc.Type, tc.DocTypeID FROM tableColumns tc  ";
+	var query = "SELECT tc.TableName, tc.ColumnName, tc.Type, tc.DocTypeID, tc.LookupType FROM tableColumns tc  ";
 	if(tableType === "Document"){
 		query += " WHERE tc.TableName LIKE '%GlobalDocFields_GS%'";
 
     	query += " UNION ";
-    	query += " SELECT tc.TableName, tc.ColumnName, tc.Type, tc.DocTypeID FROM tableColumns tc  ";
+    	query += " SELECT tc.TableName, tc.ColumnName, tc.Type, tc.DocTypeID, tc.LookupType FROM tableColumns tc  ";
     	query += " left JOIN DocumentType dt ON dt.DocTypeID = tc.DocTypeID   ";
     	query += " WHERE dt.ACTIVE = 1  AND tc.TableName LIKE '%Document%'  ";
     	query += " ORDER BY tc.DocTypeID  ";
@@ -95,6 +96,8 @@ function loadDocTypes(tableType, done,connection) {
 				doc.type = column.value;
 			} else if(column.metadata.colName == 'DocTypeID'){
 				doc.docTypeId = column.value;
+			} else if(column.metadata.colName == 'LookupType'){
+				doc.lookupType = column.value;
 			} else {
 				// console.log('n: '+column.metadata.colName);
 			//	doc.name = column.value;
@@ -102,8 +105,10 @@ function loadDocTypes(tableType, done,connection) {
 			}
 		});
 		
-		console.log('doc: '+doc.docTypeId+" "+doc.columnName);
+		//console.log('doc: '+doc.docTypeId+" "+doc.columnName);
 		//resultData.push(doc);
+		
+		doc.columns = ['faf','sff','lololo'];
 		
 		if(resultData.get(doc.docTypeId) == undefined){
 			resultData.set(doc.docTypeId,[]);
@@ -116,4 +121,29 @@ function loadDocTypes(tableType, done,connection) {
 	});
 
 	connection.execSql(request);
+}
+
+/**
+ * 
+ */
+function loadLookupValues( connection){
+	console.log("--- "+(new Date()).getHours()+":"+(new Date()).getMinutes()+' createDocCommonTempTable');
+	var lookupColumn = "mm";
+	var docTypesArray = searchParamsArray[0].DOC_SEARCH_DIALOG_COMMON_FORM;
+	console.log('docTypesArray.length '+docTypesArray);
+	if(typeof docTypesArray !== "undefined" && docTypesArray.length > 0){
+		commonSearchInputTempTableName = "witemptestdocCommon1";
+		var sqlCreateTempTable = "SELECT  [LookupValue]  FROM [docfieldlookup] where LookupType = '"+lookupColumn+"'";
+	
+		request = new Request(sqlCreateTempTable, function(err, rowCount) {
+			if (err) {
+				console.log(err);
+			} else {
+				populateDocCommonTempTable(docTypesArray, connection);
+			}
+		});
+		connection.execSql(request);
+	} else {
+		createDocGlobalTempTable(connection);
+	}
 }

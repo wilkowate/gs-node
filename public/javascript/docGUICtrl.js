@@ -17,7 +17,7 @@ function registerDocSearchDlgEvents(){
 }
 
 function addNewTab(dlgName, typeName) {
-	var a = docTypesCollection.get(typeName+"d");
+	var a = docTypesCollection.get("docTypeTabId"+typeName);
 	populateSearchTab("docSearchDlg", a);
 	var nr = $("#"+dlgName+" .tabNames li").length - 1;
 	$("#tabsPanel li:eq("+nr+") a").tab('show');
@@ -28,7 +28,7 @@ function populateSearchTab(dlgName, a){
 	//var a = $.parseJSON(layer.value);
 	//docTypesMap.set(a[0].tableName,a);
 	
-	var tabId = a[0].docTypeId+"d";
+	var tabId = "docTypeTabId"+a[0].docTypeId;
 	
 	var tabHeader = '<li><a data-toggle="tab" href="#'+tabId+'">';
 	
@@ -45,8 +45,19 @@ function populateSearchTab(dlgName, a){
 	
 	$("#"+dlgName+" .tabContent").append('<div id="'+tabId+'" class="tab-pane fade in active pre-scrollable">');
 	$.each(a, function(j, docType) {
-		console.log('type: '+docType.type);
-		if(docType.type.startsWith('nvarchar')){
+		console.log('type: '+docType.type+" lookup: "+docType.lookupType);
+
+		if(typeof docType.lookupType != "undefined" && docType.lookupType.length > 0){
+			var inputTxt = '<p>'+docType.columnName+':';
+			inputTxt += '<select name="tete" id="'+docType.lookupType+'" class="multidemo" multiple="multiple"';
+			inputTxt += ' data-columnName="'+docType.columnName+'" ';
+			inputTxt += ' >';
+			inputTxt += '<option  value="222jQuery">jQuery tutorial</option>';
+			inputTxt += '<option value="333jQuery1">jQuery tutorial1</option>';
+			//inputTxt += ' type="text"  ><br></p>';
+			inputTxt += ' </select></p>';
+			$("#"+tabId).append(inputTxt);
+		} else if(docType.type.startsWith('nvarchar')){
 			var inputTxt = '<p> '+docType.columnName+'(txt): <input value="" name="';
 			inputTxt += docType.docTypeId+SEP+docType.columnName+'"';
 			inputTxt += ' data-type="'+docType.type+'"';
@@ -92,6 +103,7 @@ function populateSearchTab(dlgName, a){
 			
 			$("#"+tabId).append(inputTxt);
 		}
+		$('#'+docType.lookupType).multiselect();
 
 	});
 	$("#"+dlgName+" .tabContent").append('</div>');
