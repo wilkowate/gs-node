@@ -38,15 +38,16 @@ exports.get = function(tableType, done) {
  */
 function loadDocTypes(tableType, done,connection) {
 
-	var resultData = new Map();
+	var resTypesCollection = new Map();
 	var docTypes = [];
+	var typesArrayToGo = [];
 	
-	var query = "SELECT tc.TableName, tc.ColumnName, tc.Type, tc.DocTypeID, tc.LookupType FROM tableColumns tc  ";
+	var query = "SELECT LTRIM(RTRIM(tc.TableName))  as TableName, tc.ColumnName, tc.Type, tc.DocTypeID, tc.LookupType FROM tableColumns tc  ";
 	if(tableType === "Document"){
 		query += " WHERE tc.TableName LIKE '%GlobalDocFields_GS%'";
 
     	query += " UNION ";
-    	query += " SELECT tc.TableName, tc.ColumnName, tc.Type, tc.DocTypeID, tc.LookupType FROM tableColumns tc  ";
+    	query += " SELECT LTRIM(RTRIM(tc.TableName)) as TableName , tc.ColumnName, tc.Type, tc.DocTypeID, tc.LookupType FROM tableColumns tc  ";
     	query += " left JOIN DocumentType dt ON dt.DocTypeID = tc.DocTypeID   ";
     	query += " WHERE dt.ACTIVE = 1  AND tc.TableName LIKE '%Document%'  ";
     	query += " ORDER BY tc.DocTypeID  ";
@@ -65,22 +66,12 @@ function loadDocTypes(tableType, done,connection) {
 		if (err) {
 			console.log(err);
 		} else {
-			
-			var datares = [];
-			
-			resultData.forEach((value, key) => {
-				var obj = new Object();
-			//	console.log("key:"+key+" "+JSON.stringify(value));
-				obj.key = key;
-				obj.value = JSON.stringify(value);
-				datares.push(obj);
-			})
-			
-			var res1 = {"data":datares};
-		    done(null,res1);
-		    console.log(rowCount + ' rows');
-	    }
-		connection.close();
+			//resultData.forEach((value, key) => {
+			console.log(typesArrayToGo);
+				loadLookupValuesForDocType(resTypesCollection,typesArrayToGo[0],typesArrayToGo, done, connection);
+			//});
+		}
+		//connection.close();
 	});
 	  
 	request.on('row', function(columns) {
@@ -110,40 +101,113 @@ function loadDocTypes(tableType, done,connection) {
 		
 		doc.columns = ['faf','sff','lololo'];
 		
-		if(resultData.get(doc.docTypeId) == undefined){
-			resultData.set(doc.docTypeId,[]);
+		if(resTypesCollection.get(doc.docTypeId) == undefined){
+			resTypesCollection.set(doc.docTypeId,[]);
+			typesArrayToGo.push(doc.tableName);
 		}
-		(resultData.get(doc.docTypeId)).push(doc);
-	});
-	  
-	request.on('done', function (rowCount, more, rows) { 
-		console.log('DONE');
+		(resTypesCollection.get(doc.docTypeId)).push(doc);
 	});
 
 	connection.execSql(request);
 }
 
 /**
+ * recurent function that will load all columns joined with lookup values
  * 
  */
-function loadLookupValues( connection){
-	console.log("--- "+(new Date()).getHours()+":"+(new Date()).getMinutes()+' createDocCommonTempTable');
-	var lookupColumn = "mm";
-	var docTypesArray = searchParamsArray[0].DOC_SEARCH_DIALOG_COMMON_FORM;
-	console.log('docTypesArray.length '+docTypesArray);
-	if(typeof docTypesArray !== "undefined" && docTypesArray.length > 0){
-		commonSearchInputTempTableName = "witemptestdocCommon1";
-		var sqlCreateTempTable = "SELECT  [LookupValue]  FROM [docfieldlookup] where LookupType = '"+lookupColumn+"'";
+function loadLookupValuesForDocType(resTypesCollection,tableName,typesArrayToGo, done, connection){
+	console.log("--- "+(new Date()).getHours()+":"+(new Date()).getMinutes()+' loadLookupValues ');
+	var docTypeColumns = [];
 	
-		request = new Request(sqlCreateTempTable, function(err, rowCount) {
+	var resColumnsCollection = new Map();
+
+	//if(typeof value[0].lookupType ==='undefined')
+	
+		commonSearchInputTempTableName = "witemptestdocCommon1";
+		var query = "SELECT LTRIM(RTRIM(tc.TableName)) as TableName, tc.ColumnName, tc.Type, tc.DocTypeID, tc.LookupType, ";
+		query += "  [LookupValue]  FROM tableColumns tc ";//where LookupType = '"+value[0].lookupType+"'";
+		query += " left JOIN docfieldlookup dt ON dt.LookupType = tc.ColumnName";
+		query += " WHERE tc.TableName =  '"+tableName+"'";
+		
+		//console.log('DONEquery'+query);
+		
+		request = new Request(query, function(err, rowCount) {
 			if (err) {
 				console.log(err);
 			} else {
-				populateDocCommonTempTable(docTypesArray, connection);
+				
+				var columnsForType = [];
+				
+				var docId = 0;
+				
+				resColumnsCollection.forEach((value, key) => {
+					//var obj = new Object();
+					//obj.key = key;
+					//obj.value = JSON.stringify(value);
+					docId = value.docTypeId;
+					//console.log('obj.value '+obj.value);
+					columnsForType.push(value);
+				});
+				
+				typesArrayToGo = typesArrayToGo.slice(typesArrayToGo.indexOf(tableName)+1);
+				console.log(typesArrayToGo.indexOf(tableName)+" "+tableName + ' NEXT '+typesArrayToGo);
+				if(typesArrayToGo.length < 1){
+					console.log('DONE');
+					var datares = [];
+					resTypesCollection.forEach((value, key) => {
+						var obj = new Object();
+						obj.key = key;
+						obj.value = JSON.stringify(value);
+						datares.push(obj);
+					});
+					
+					var res1 = {"data":datares};
+				    done(null,res1);
+				    console.log(rowCount + ' rows');
+				}	else {
+					console.log(docId+' smalldone-=--------------- '+columnsForType);
+					resTypesCollection.set(docId, columnsForType);
+					loadLookupValuesForDocType(resTypesCollection,typesArrayToGo[0],typesArrayToGo, done, connection);
+				}
+				//var res1 = {"data":datares};
+
+			   // 
+			    
+			}
+		});
+		
+		request.on('row', function(columns) {
+			var doc = new DocTypeAttr(0);
+			var lookupValue = 'dd';
+			columns.forEach(function(column) {
+				//console.log('column: '+column.metadata.colName);
+				if (column.value === null) {
+				} else if(column.metadata.colName == 'TableName'){
+					doc.tableName = column.value;
+				} else if(column.metadata.colName == 'ColumnName'){
+					doc.columnName = column.value;
+				} else if(column.metadata.colName == 'Type'){
+					doc.type = column.value;
+				} else if(column.metadata.colName == 'DocTypeID'){
+					doc.docTypeId = column.value;
+				} else if(column.metadata.colName == 'LookupType'){
+					doc.lookupType = column.value;
+				} else if(column.metadata.colName == 'LookupValue'){
+					lookupValue = column.value;
+					
+				}
+			});
+			
+			//doc.columns = ['faf','sff','lololo'];
+			
+			if(resColumnsCollection.get(doc.columnName) == undefined){
+				doc.columns = [lookupValue];
+				resColumnsCollection.set(doc.columnName,doc);
+				
+			} else {
+				(resColumnsCollection.get(doc.columnName)).columns.push(lookupValue);
 			}
 		});
 		connection.execSql(request);
-	} else {
-		createDocGlobalTempTable(connection);
-	}
+
 }

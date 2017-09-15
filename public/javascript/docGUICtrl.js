@@ -52,9 +52,9 @@ function populateSearchTab(dlgName, a){
 			inputTxt += '<select name="tete" id="'+docType.lookupType+'" class="multidemo" multiple="multiple"';
 			inputTxt += ' data-columnName="'+docType.columnName+'" ';
 			inputTxt += ' >';
-			inputTxt += '<option  value="222jQuery">jQuery tutorial</option>';
-			inputTxt += '<option value="333jQuery1">jQuery tutorial1</option>';
-			//inputTxt += ' type="text"  ><br></p>';
+			for (var i = 0; i < docType.columns.length; i++) {
+				inputTxt += '<option  value="'+docType.columns[i]+'">'+docType.columns[i]+'</option>';
+			}
 			inputTxt += ' </select></p>';
 			$("#"+tabId).append(inputTxt);
 		} else if(docType.type.startsWith('nvarchar')){
