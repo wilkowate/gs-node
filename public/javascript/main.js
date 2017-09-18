@@ -29,26 +29,27 @@ var showObjects =  function() {
 		
 	 sessionStorage.setItem('selecteCatId',617);
 	 
-	 oTable = $('#docs').DataTable( {
-		 "bProcessing": true,
-		 "sAjaxSource": "/documents/search",
-		 "fnServerParams": function ( aoData ) {
+	oTable = $('#docs').DataTable( {
+		"bProcessing": true,
+		"sAjaxSource": "/documents/search",
+		"fnServerParams": function ( aoData ) {
 
-			 var sa = [];
-			 var obj = new Object();
-			 if(typeof docCommonDlgSP !== "undefined"){
-				 obj.DOC_SEARCH_DIALOG_COMMON_FORM = docCommonDlgSP;
-				// sa.push(obj);
- 			 }
-			 if(typeof docGlobalSPDlg !== "undefined"){
-				 obj.DOC_SEARCH_DIALOG_GLOBAL_FIELDS = docGlobalSPDlg;
-				 //sa.push(obj);
-			 }
-			 if(typeof docSPDlg !== "undefined"){
-				 obj.DOC_SEARCH_DIALOG_TYPE_FIELDS = docSPDlg;
-				 
-			 }
-			 sa.push(obj);
+			var sa = [];
+			var obj = new Object();
+			var chApplySD = $("#docTableSearchForm [name='applySearchCriteria']");
+
+			if(chApplySD.is(':checked')){
+				if(typeof docCommonDlgSP !== "undefined"){
+					obj.DOC_SEARCH_DIALOG_COMMON_FORM = docCommonDlgSP;
+				}
+				if(typeof docGlobalSPDlg !== "undefined"){
+					obj.DOC_SEARCH_DIALOG_GLOBAL_FIELDS = docGlobalSPDlg;
+				}
+				if(typeof docSPDlg !== "undefined"){
+					obj.DOC_SEARCH_DIALOG_TYPE_FIELDS = docSPDlg;
+				}
+				sa.push(obj);
+			}
 			 aoData.push( { "name": "search_params", "value": sa } );
          },
        // "fnServerParams": paramsArray,
