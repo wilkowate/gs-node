@@ -51,6 +51,9 @@ function populateSearchTab(dlgName, a){
 			var inputTxt = '<p>'+docType.columnName+':';
 			inputTxt += '<select name="tete" id="'+docType.lookupType+'" class="multidemo" multiple="multiple"';
 			inputTxt += ' data-columnName="'+docType.columnName+'" ';
+			inputTxt += ' data-docTypeId="'+docType.docTypeId+'"';
+			inputTxt += ' data-type="List"';
+			inputTxt += ' data-sfOrder="0"';
 			inputTxt += ' >';
 			for (var i = 0; i < docType.columns.length; i++) {
 				inputTxt += '<option  value="'+docType.columns[i]+'">'+docType.columns[i]+'</option>';
