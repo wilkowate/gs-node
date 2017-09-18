@@ -16,6 +16,23 @@ function registerDocSearchDlgEvents(){
 	});
 }
 
+function loadDocTypesCollection(dlgName, data){			
+	docTypesCollection = new Map();
+		
+	$.each(data.data, function(i, layer) {
+		var a = $.parseJSON(layer.value);
+		//alert(i+'id '+a[0].docTypeId);
+		docTypesCollection.set("docTypeTabId"+a[0].docTypeId,a);
+		
+		if(a[0].docTypeId == 0){
+			addNewTab("docSearchDlg", 0);
+		}
+		
+		$(".docTypesCombo").append('<option value="'+a[0].docTypeId+'">'+a[0].tableName+'</option>');
+		
+	});
+}
+
 function addNewTab(dlgName, typeName) {
 	var a = docTypesCollection.get("docTypeTabId"+typeName);
 	populateSearchTab("docSearchDlg", a);
