@@ -401,16 +401,21 @@ function executeMainSearchSP( connection){
 		var doc = new Document(1);
 		columns.forEach(function(column) {
 			if (column.value === null) {
-				
-				//console.log('n: '+column.metadata.colName);
+
 			} else if (column.metadata.colName === "Doc_Name") {
 				//console.log('row '+column.value);
 				doc.name = column.value.substring(0, 50);;
 			}	else if (column.metadata.colName === "Doc_ID") {
 					//console.log('row '+column.value);
-					doc.id = column.value;
-					
-				}
+				doc.id = column.value;
+			}	else if (column.metadata.colName === "Hist_FileName") {
+				//console.log('row '+column.value);
+				doc.Hist_FileName = column.value;
+			} else {
+				doc[column.metadata.colName] = column.value;
+			}
+			
+			
 		});
 		data1.push(doc);
 	});
