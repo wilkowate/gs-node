@@ -11,7 +11,6 @@ $( document ).ready(function() {
 	$(function() {
 		var parameters = { id:1 };
 		$.getJSON( '/docProcessor/loadDocTypes',parameters, function(data) {
-			//JSONObject json = new JSONObject(data.data);
 			loadDocTypesCollection("docSearchDlg",data);
 			//addNewTab("docSearchDlg");
 			//first tab is selected:
@@ -44,9 +43,7 @@ $( document ).ready(function() {
 					searchForObj.value = this.value;
 				}
 				if(this.name.startsWith("Include")){
-				//	alert(this.name+' v '+this.value+" "+(this.value == "on")+"   :"+this.checked);
 					if(this.checked){
-						
 						obj = { name: this.name};
 						obj.value = this.value;
 						obj.sfOrder = this.getAttribute('data-sfOrder');
@@ -67,26 +64,27 @@ $( document ).ready(function() {
 			//alert(this.type +"  "+ this.value+" n: "+this.name);
 			
 			if(this.value != "" && this.name != ""){
-				
+				var obj = { name: this.name};
 				
 				if(this.type === 'select-multiple'){
 					var list= this.selectedOptions;
-					alert('sel '+list + " n: "+this.name);
+					var tempValue = "";
 					for (var i = 0; i < list.length; i++) {
-						alert('list '+list[i].value);
+						//alert('list '+list[i].value);
+						if(i>0){
+							tempValue += ",";
+						}
+						tempValue += list[i].value;
 					   // console.log(list[i].value); //second console output
 					}
-					//alert('sel '+this.type + " n: "+this.name);
-					//this.forEach(function( index ) {
-					//	  console.log( index + ": " + $( this ).text() );
-					//	});
+					obj.value = tempValue;
+				} else {				
+					obj.value = this.value;
 				}
-				
-				var obj = { name: this.name};
-				obj.value = this.value;
 				obj.columnName = this.getAttribute('data-columnName');
 				obj.docTypeId = this.getAttribute('data-docTypeId');
 				obj.sfOrder = this.getAttribute('data-sfOrder');
+				obj.type = this.getAttribute('data-type');
 				if(obj.docTypeId == 0){
 					docGlobalSPDlg.push(obj);
 				} else {
@@ -94,8 +92,6 @@ $( document ).ready(function() {
 				}
 			}
 		});
-		
-    //alert("Form Submission prevented / stoped. "+JSON.stringify(docSPDlg));
 	});
 
 //	$("#docTypesSearchForm").on('submit',function(event){
