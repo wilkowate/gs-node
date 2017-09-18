@@ -72,12 +72,19 @@ exports.get = function(search_params,iDisplayStart,iDisplayLength,sEcho, done) {
 	 sessionId = 0;
 
 	//add functionality to those variables:
-	 pageNumber = 1;
+	 
 	 sortByColumn = "Name";
 	 documentTypeId = 1;
 	
 	pageSize = iDisplayLength;
 	pageStart = iDisplayStart;
+	
+	if(iDisplayStart == 0){
+		pageNumber = 1;
+	} else {
+		pageNumber = iDisplayStart/iDisplayLength +1;
+	}
+	
 	sEcho1 = sEcho;
 	callbackDone = done;
 	searchParamsArray = search_params;
@@ -107,9 +114,7 @@ function loadDocs(iDisplayStart,iDisplayLength,done,connection) {
 		createDocCommonTempTable(connection);
 	} else {
 		executeMainSearchSP(connection);
-	}
-	
-	
+	}	
 	
 //	request = new Request(query, function(err, rowCount) {
 //		if (err) {
@@ -321,7 +326,7 @@ function populateDocGlobalTempTable(docTypesArray, connection){
 	for (var i = 0, len = docTypesArray.length; i < len; i++) {
 		obj = docTypesArray[0];
 		q += " INSERT INTO " + globalSearchInputTempTableName + " (SearchField,SearchFieldType,SearchValue,SearchFieldOrder) VALUES (" ;
-		q += "'"+obj.columnName+"','text','"+obj.value+"',"+obj.sfOrder+");";
+		q += "'"+obj.columnName+"','"+obj.type+"','"+obj.value+"',"+obj.sfOrder+");";
 		console.log("query: " + q);
 	}
 	console.log('docTypesArray'+docTypesArray);
@@ -344,6 +349,7 @@ function populateDocGlobalTempTable(docTypesArray, connection){
  */
 function executeMainSearchSP( connection){
 	
+	var totalNrRecords = 0;
 	var data1 = [];
 	var draw = pageStart/pageSize + 1;
 	console.log("3--- "+(new Date()).getHours()+":"+(new Date()).getMinutes()+' executeMainSearchSP  ');
@@ -357,7 +363,7 @@ function executeMainSearchSP( connection){
 	var query = " exec V5_SearchForDocuments 280,"+commonSearchInputTempTableName+", "+globalSearchInputTempTableName+", "+docSearchInputTempTableName;
 	query += ", "+countParam+", "+includeHiddenDocs+", 0, "+userName+",";
 	query += categoriesTempTableName+","+categoryDocsTempTableName+", null,"+briefcaseId+", "+briefcaseTempTable+", "+mapTempTable+","+uniqueOnly+",";
-	query += pageNumber+","+pageSize+","+sortByColumn+","+documentTypeId+",@number";
+	query += pageNumber+","+pageSize+","+sortByColumn+","+documentTypeId+",@number OUTPUT";
 	
 	console.log(' query:'+query);
 	
@@ -373,7 +379,7 @@ function executeMainSearchSP( connection){
 			var res1 = {
 					"draw": draw,
 					"iTotalRecords": nrOfRecords,
-			    	"iTotalDisplayRecords": "200",
+			    	"iTotalDisplayRecords": totalNrRecords,
 			    	"sEcho": sEcho1,
 			    	"aaData":data1
 			    };
@@ -386,6 +392,7 @@ function executeMainSearchSP( connection){
 	request.addOutputParameter('number', TYPES.Int);
 	
 	request.on('returnValue', function(parameterName, value, metadata) {
+		totalNrRecords = value;
 	    console.log(parameterName + ' = ' + value);      // number = 42
 	                                                     // string = qaz
 	  });
