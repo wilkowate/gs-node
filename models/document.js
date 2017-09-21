@@ -266,7 +266,7 @@ function populateDocTypeTempTable( docTypesArray, connection){
 	//var docTypesArray = searchParamsArray[0].DOC_SEARCH_DIALOG_TYPE_FIELDS;
 	//$.each(docTypesArray, function(i, obj) {
 	for (var i = 0, len = docTypesArray.length; i < len; i++) {
-		obj = docTypesArray[0];
+		obj = docTypesArray[i];
 		q += " INSERT INTO " + docSearchInputTempTableName + " (SearchDocTypeID ,SearchField,SearchFieldType,SearchValue,SearchFieldOrder) VALUES (" ;
 		q += obj.docTypeId + ",'"+obj.columnName+"','text','"+obj.value+"',0);";
 	}
@@ -296,14 +296,23 @@ function populateDocCommonTempTable(docTypesArray, connection){
 	
 	console.log("--- "+(new Date()).getHours()+":"+(new Date()).getMinutes()+' populateDocCommonTempTable');
 	
-	var q = "INSERT INTO " + commonSearchInputTempTableName
-	+ " (SearchField,SearchFieldType,SearchValue,SearchFieldOrder) VALUES ('SearchFor','Text','postponement',0)";
+	//var q = "INSERT INTO " + commonSearchInputTempTableName
+	//+ " (SearchField,SearchFieldType,SearchValue,SearchFieldOrder) VALUES ('SearchFor','Text','postponement',0)";
 	
-	q += "INSERT INTO " + commonSearchInputTempTableName
-	+ " (SearchField,SearchFieldType,SearchValue,SearchFieldOrder) VALUES ('Include',NULL,'Name',0)";
+	//q += "INSERT INTO " + commonSearchInputTempTableName
+	//+ " (SearchField,SearchFieldType,SearchValue,SearchFieldOrder) VALUES ('Include',NULL,'Name',0)";
 	
-	q="";
+	var q="";
 	console.log("query: " + q);
+	
+	for (var i = 0, len = docTypesArray.length; i < len; i++) {
+		obj = docTypesArray[i];
+		q += " INSERT INTO " + commonSearchInputTempTableName + " (SearchField,SearchFieldType,SearchValue,SearchFieldOrder) VALUES (" ;
+		q += "'"+obj.columnName+"','"+obj.type+"','"+obj.value+"',"+obj.sfOrder+");";
+		console.log("query: " + q);
+	}
+	console.log('docTypesArray'+docTypesArray);
+	
 	
 	request = new Request(q, function(err, rowCount) {
 		if (err) {
@@ -324,7 +333,7 @@ function populateDocGlobalTempTable(docTypesArray, connection){
 	console.log("--- "+(new Date()).getHours()+":"+(new Date()).getMinutes()+' populateDocGlobalTempTable');
 	var q = "";
 	for (var i = 0, len = docTypesArray.length; i < len; i++) {
-		obj = docTypesArray[0];
+		obj = docTypesArray[i];
 		q += " INSERT INTO " + globalSearchInputTempTableName + " (SearchField,SearchFieldType,SearchValue,SearchFieldOrder) VALUES (" ;
 		q += "'"+obj.columnName+"','"+obj.type+"','"+obj.value+"',"+obj.sfOrder+");";
 		console.log("query: " + q);
