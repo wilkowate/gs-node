@@ -54,9 +54,11 @@ var showObjects =  function() {
          },
        // "fnServerParams": paramsArray,
  	     "bServerSide": true,
- 	     "aoColumns": [
- 	                   { "mData": "name" },
- 	                   { "mData": "id" }
+ 	     "scrollX": true,
+ 	    "scrollY": "200px",
+ 	    "columns": [
+ 	                   { "name": "id","data": "id" },
+ 	                   { "data": "name", "width":"30%" }
  	                   ]
 		 } );
 	 
