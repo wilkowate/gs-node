@@ -10,17 +10,18 @@
 	<form id="docTableSearchForm" > 
 	
 	<span> Doc Type:</span> <select class=" pad3 docTypesCombo"> </select>
-	<span> Apply Search Criteria:</span> <input name="applySearchCriteria"  type="checkbox"  >
+	<span> Apply Search Criteria:</span> <input name="applySearchCriteria"  type="checkbox" checked >
 	</form>
-		table(id="docs",class="table table-striped table-condensed table-hover display")
-			thead
-			tr
-				<th><span>Name</span></th>
-				<th><span>Id</span></th>
-		tbody
-		tr
-		td
-		td
+	
+	<table class="display" id="docs">
+		<thead>
+			<tr>
+				<th>name</th>
+				<th>id</th>
+			</tr>
+		</thead>
+
+	</table>
 	</div>
 	
 	<div id="home" class="tab-pane fade ">
