@@ -21,7 +21,7 @@ $( document ).ready(function() {
 	});
 	
 	
-	
+	///// MAIN FIRE SEARCH DOC /////////////////////////
 	$("#applySearchCriteria").on('click',function(event){
 		
 		$("#fireDocSearchBtn").attr('src',"images/icons/DEV_SD_red.gif");
@@ -41,11 +41,16 @@ $( document ).ready(function() {
 				if(this.name === 'SearchFor'){
 					searchForObj = { name: this.name};
 					searchForObj.value = this.value;
+					searchForObj.type = 'text';
+					searchForObj.sfOrder = '0';
+					searchForObj.columnName = 'SearchFor';
 				}
 				if(this.name.startsWith("Include")){
 					if(this.checked){
 						obj = { name: this.name};
-						obj.value = this.value;
+						obj.value = this.getAttribute('data-columnName');
+						obj.columnName = 'Include';
+						obj.type = 'NULL';//this.getAttribute('data-type');
 						obj.sfOrder = this.getAttribute('data-sfOrder');
 						docCommonDlgSP.push(obj);
 						include = true;
@@ -94,18 +99,5 @@ $( document ).ready(function() {
 		});
 	});
 
-//	$("#docTypesSearchForm").on('submit',function(event){
-//		event.preventDefault() ;
-//		event.stopPropagation();
-//		docSPDlg = [];
-//		$("#docTypesSearchForm").find(':input').each(function(i) {
-//			if(this.value != ""){
-//				var obj = { name: this.name};
-//				obj.value = this.value;
-//				docSPDlg.push(obj);
-//			}
-//		});
-//    //alert("Form Submission prevented / stoped. "+JSON.stringify(docSPDlg));
-//	});
-
 });
+
