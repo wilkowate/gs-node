@@ -1,4 +1,42 @@
     
+function initDocsTable(){
+	var cols = [
+                 { "name": "id","data": "id" },
+                  { "data": "name", "width":"30%" }
+                  ];
+	
+	docsTable = $('#docs').DataTable( {
+		"bProcessing": true,
+		"sAjaxSource": "/documents/search",
+		"fnServerParams": function ( aoData ) {
+
+			var sa = [];
+			var obj = new Object();
+			var chApplySD = $("#docTableSearchForm [name='applySearchCriteria']");
+
+			if(chApplySD.is(':checked')){
+				if(typeof docCommonDlgSP !== "undefined"){
+					obj.DOC_SEARCH_DIALOG_COMMON_FORM = docCommonDlgSP;
+				}
+				if(typeof docGlobalSPDlg !== "undefined"){
+					obj.DOC_SEARCH_DIALOG_GLOBAL_FIELDS = docGlobalSPDlg;
+				}
+				if(typeof docSPDlg !== "undefined"){
+					obj.DOC_SEARCH_DIALOG_TYPE_FIELDS = docSPDlg;
+				}
+				sa.push(obj);
+			}
+			 aoData.push( { "name": "search_params", "value": sa } );
+         },
+       // "fnServerParams": paramsArray,
+ 	     "bServerSide": true,
+ 	     "scrollX": true,
+ 	    "scrollY": "200px",
+ 	    "columns": cols
+		 } );
+}
+
+
 function registerDocSearchDlgEvents(){
 
 //$("#docSearchDlg .closeTab").click(function () {

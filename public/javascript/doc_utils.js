@@ -7,6 +7,8 @@ const DOC_SEARCH_DIALOG_TYPE_FIELDS = "DOC_SEARCH_DIALOG_TYPE_FIELDS";
 const DOC_SEARCH_DIALOG_GLOBAL_FIELDS = "DOC_SEARCH_DIALOG_GLOBAL_FIELDS";
 
 $( document ).ready(function() {
+	
+	initDocsTable();
 	 
 	$(function() {
 		var parameters = { id:1 };
