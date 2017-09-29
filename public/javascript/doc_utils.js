@@ -20,15 +20,21 @@ $( document ).ready(function() {
 		var d = docTypesCollection.get("docTypeTabId"+$(this).val());
 		
 		docsTable.destroy();
-
-		$('#docs thead').html("<tr><th>jjj</th><th>jjj</th><th>jjj2</th></tr>");
+		
+		var header = "<tr><th>Doc_ID</th><th>Name</th>";
 		var cols = [
-		            { "data": "name", "width":"30%" },
-	                { "name": "id","data": "id" },
-	                { "name": "id","data": "id" }
-	                 
+                { "name": "Doc_id","data": "id" },
+		            { "data": "name", "width":"30%" }
 	                 ];
 		
+		for(i = 0; i<d.length; i++){
+			col = {"data":"DT_"+d[i].columnName};
+			cols.push(col);
+			header += "<th>"+d[i].columnName+"</th>";
+		}
+		
+		$('#docs thead').html(""+header+"</tr>");
+		//alert("col "+JSON.stringify(cols));
 		docSPdocType = $(this).val();
 		initDocsTable(cols);
 		//addNewTab("docSearchDlg", $(this).val());
