@@ -8,7 +8,31 @@ const DOC_SEARCH_DIALOG_GLOBAL_FIELDS = "DOC_SEARCH_DIALOG_GLOBAL_FIELDS";
 
 $( document ).ready(function() {
 	
-	initDocsTable();
+	docSPdocType = 0;
+	
+	var cols = [
+                { "name": "id","data": "id" },
+                 { "data": "name", "width":"30%" }
+                 ];
+	initDocsTable(cols);
+	
+	$("#docTableSearchForm .docTypesCombo").on('change',function () {
+		var d = docTypesCollection.get("docTypeTabId"+$(this).val());
+		
+		docsTable.destroy();
+
+		$('#docs thead').html("<tr><th>jjj</th><th>jjj</th><th>jjj2</th></tr>");
+		var cols = [
+		            { "data": "name", "width":"30%" },
+	                { "name": "id","data": "id" },
+	                { "name": "id","data": "id" }
+	                 
+	                 ];
+		
+		docSPdocType = $(this).val();
+		initDocsTable(cols);
+		//addNewTab("docSearchDlg", $(this).val());
+	});
 	 
 	$(function() {
 		var parameters = { id:1 };

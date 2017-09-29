@@ -107,10 +107,11 @@ exports.get = function(search_params,iDisplayStart,iDisplayLength,sEcho, done) {
  * @param connection
  */
 function loadDocs(iDisplayStart,iDisplayLength,done,connection) {
-	console.log("--- "+(new Date()).getHours()+":"+(new Date()).getMinutes()+' loadDocs:'+commonSearchInputTempTableName);
+	console.log("!!!loadDocs --- "+(new Date()).getHours()+":"+(new Date()).getMinutes()+' :'+commonSearchInputTempTableName);
 
 
 	if(typeof searchParamsArray !== "undefined"){
+		documentTypeId = searchParamsArray[0].DOC_SP_DOC_TYPE;
 		createDocCommonTempTable(connection);
 	} else {
 		executeMainSearchSP(connection);
@@ -196,7 +197,7 @@ function createDocCommonTempTable( connection){
 	console.log("--- "+(new Date()).getHours()+":"+(new Date()).getMinutes()+' createDocCommonTempTable');
 	
 	var docTypesArray = searchParamsArray[0].DOC_SEARCH_DIALOG_COMMON_FORM;
-	console.log('docTypesArray.length '+docTypesArray);
+	//console.log('docTypesArray.length '+docTypesArray);
 	if(typeof docTypesArray !== "undefined" && docTypesArray.length > 0){
 		commonSearchInputTempTableName = "witemptestdocCommon1";
 		var sqlCreateTempTable = " if not exists (select * from sysobjects where name='"+commonSearchInputTempTableName;

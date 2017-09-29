@@ -1,9 +1,5 @@
     
-function initDocsTable(){
-	var cols = [
-                 { "name": "id","data": "id" },
-                  { "data": "name", "width":"30%" }
-                  ];
+function initDocsTable(cols){
 	
 	docsTable = $('#docs').DataTable( {
 		"bProcessing": true,
@@ -13,6 +9,11 @@ function initDocsTable(){
 			var sa = [];
 			var obj = new Object();
 			var chApplySD = $("#docTableSearchForm [name='applySearchCriteria']");
+			
+			//if(docSPdocType > 0){
+				obj.DOC_SP_DOC_TYPE = docSPdocType;
+				sa.push(obj);
+			//}
 
 			if(chApplySD.is(':checked')){
 				if(typeof docCommonDlgSP !== "undefined"){
