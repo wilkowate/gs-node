@@ -410,9 +410,7 @@ function executeMainSearchSP( connection){
 	request.on('row', function(columns) {
 		var doc = new Document(1);
 		columns.forEach(function(column) {
-			if (column.value === null) {
-
-			} else if (column.metadata.colName === "Doc_Name") {
+			 if (column.metadata.colName === "Doc_Name") {
 				//console.log('row '+column.value);
 				doc.name = column.value.substring(0, 50);;
 			}	else if (column.metadata.colName === "Doc_ID") {
