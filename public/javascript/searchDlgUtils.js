@@ -1,4 +1,12 @@
-    
+/**
+ * This is a common place for both doc and map object search dialog
+ */
+
+
+/**
+  * 
+  * @param cols
+  */  
 function initDocsTable(cols){
 	
 	docsTable = $('#docs').DataTable( {
@@ -118,7 +126,7 @@ function populateSearchTab(dlgName, a){
 			$("#"+tabId).append(inputTxt);
 		} else if(docType.type.startsWith('nvarchar')){
 			var inputTxt = '<p> '+docType.columnName+'(txt): <input value="" name="';
-			inputTxt += docType.docTypeId+SEP+docType.columnName+'"';
+			inputTxt += docType.docTypeId+"_"+docType.columnName+'"';
 			inputTxt += ' data-type="'+docType.type+'"';
 			inputTxt += ' data-columnName="'+docType.columnName+'"';
 			inputTxt += ' data-docTypeId="'+docType.docTypeId+'"';
@@ -127,7 +135,7 @@ function populateSearchTab(dlgName, a){
 			$("#"+tabId).append(inputTxt);
 		} else if(docType.type.startsWith('time')){
 			var inputTxt = '<p> '+docType.columnName+'(tm) From: <input size="4" value="" name="';
-			inputTxt += docType.docTypeId+SEP+docType.columnName+'"';
+			inputTxt += docType.docTypeId+"_"+docType.columnName+'"';
 			inputTxt += ' data-type="'+docType.type+'"';
 			inputTxt += ' data-columnName="'+docType.columnName+'"';
 			inputTxt += ' data-docTypeId="'+docType.docTypeId+'"';
@@ -135,7 +143,7 @@ function populateSearchTab(dlgName, a){
 			inputTxt += ' type="date"  >';
 					
 			inputTxt += ' To: <input size="4" value="" name="';
-			inputTxt += docType.docTypeId+SEP+docType.columnName+'"';
+			inputTxt += docType.docTypeId+"_"+docType.columnName+'"';
 			inputTxt += ' data-type="'+docType.type+'"';
 			inputTxt += ' data-columnName="'+docType.columnName+'"';
 			inputTxt += ' data-docTypeId="'+docType.docTypeId+'"';
@@ -145,7 +153,7 @@ function populateSearchTab(dlgName, a){
 			$("#"+tabId).append(inputTxt);
 		} else {
 			var inputTxt = '<p> '+docType.columnName+'(nr) From: <input size="4" value="" name="';
-			inputTxt += docType.docTypeId+SEP+docType.columnName+'"';
+			inputTxt += docType.docTypeId+"_"+docType.columnName+'"';
 			inputTxt += ' data-type="'+docType.type+'"';
 			inputTxt += ' data-columnName="'+docType.columnName+'"';
 			inputTxt += ' data-docTypeId="'+docType.docTypeId+'"';
@@ -153,7 +161,7 @@ function populateSearchTab(dlgName, a){
 			inputTxt += ' type="text"  >';
 			
 			inputTxt += ' To: <input size="4" value="" name="';
-			inputTxt += docType.docTypeId+SEP+docType.columnName+'"';
+			inputTxt += docType.docTypeId+"_"+docType.columnName+'"';
 			inputTxt += ' data-type="'+docType.type+'"';
 			inputTxt += ' data-columnName="'+docType.columnName+'"';
 			inputTxt += ' data-docTypeId="'+docType.docTypeId+'"';
