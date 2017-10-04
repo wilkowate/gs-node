@@ -269,7 +269,7 @@ function populateDocTypeTempTable( docTypesArray, connection){
 	for (var i = 0, len = docTypesArray.length; i < len; i++) {
 		obj = docTypesArray[i];
 		q += " INSERT INTO " + docSearchInputTempTableName + " (SearchDocTypeID ,SearchField,SearchFieldType,SearchValue,SearchFieldOrder) VALUES (" ;
-		q += obj.docTypeId + ",'"+obj.columnName+"','text','"+obj.value+"',0);";
+		q += obj.id + ",'"+obj.columnName+"','text','"+obj.value+"',0);";
 	}
 	console.log('docTypesArray'+docTypesArray);	
 	console.log("query: " + q);

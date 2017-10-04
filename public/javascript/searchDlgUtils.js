@@ -105,14 +105,11 @@ function loadDocTypesCollection(dlgName, data){
 		
 	$.each(data.data, function(i, layer) {
 		var a = $.parseJSON(layer.value);
-		//alert(i+'id '+a[0].docTypeId);
-		docTypesCollection.set(dlgName+"_"+a[0].docTypeId,a);
-		
-		if(a[0].docTypeId == 0){
+		docTypesCollection.set(dlgName+"_"+a[0].id,a);
+		if(a[0].id == 0){
 			addNewTab("docSearchDlg", 0);
 		}
-		
-		$(".docTypesCombo").append('<option value="'+a[0].docTypeId+'">'+a[0].tableName+'</option>');
+		$(".docTypesCombo").append('<option value="'+a[0].id+'">'+a[0].tableName+'</option>');
 		
 	});
 }
@@ -126,11 +123,11 @@ function loadMapLayersCollection(dlgName, data){
 	mapLayersCollection = new Map();
 	$.each(data.data, function(i, layer) {
 		var a = $.parseJSON(layer.value);
-		docTypesCollection.set(dlgName+"_"+a[0].docTypeId,a);
-		if(a[0].docTypeId == 0){
+		docTypesCollection.set(dlgName+"_"+a[0].id,a);
+		if(a[0].id == 0){
 			addNewTab("mapSearchDlg", 0);
 		}
-		$(".docTypesCombo").append('<option value="'+a[0].docTypeId+'">'+a[0].tableName+'</option>');
+		$(".mapLayersCombo").append('<option value="'+a[0].id+'">'+a[0].tableName+'</option>');
 	});
 }
 
@@ -146,7 +143,7 @@ function populateSearchTab(dlgName, a){
 	//var a = $.parseJSON(layer.value);
 	//docTypesMap.set(a[0].tableName,a);
 	
-	var tabId = dlgName+"_"+a[0].docTypeId;
+	var tabId = dlgName+"_"+a[0].id;
 	
 	var tabHeader = '<li><a data-toggle="tab" href="#'+tabId+'">';
 	
@@ -169,7 +166,7 @@ function populateSearchTab(dlgName, a){
 			var inputTxt = '<p>'+docType.columnName+':';
 			inputTxt += '<select name="tete" id="'+docType.lookupType+'" class="multidemo" multiple="multiple"';
 			inputTxt += ' data-columnName="'+docType.columnName+'" ';
-			inputTxt += ' data-docTypeId="'+docType.docTypeId+'"';
+			inputTxt += ' data-id="'+docType.id+'"';
 			inputTxt += ' data-type="List"';
 			inputTxt += ' data-sfOrder="0"';
 			inputTxt += ' >';
@@ -180,45 +177,45 @@ function populateSearchTab(dlgName, a){
 			$("#"+tabId).append(inputTxt);
 		} else if(docType.type.startsWith('nvarchar')){
 			var inputTxt = '<p> '+docType.columnName+'(txt): <input value="" name="';
-			inputTxt += docType.docTypeId+"_"+docType.columnName+'"';
+			inputTxt += docType.id+"_"+docType.columnName+'"';
 			inputTxt += ' data-type="'+docType.type+'"';
 			inputTxt += ' data-columnName="'+docType.columnName+'"';
-			inputTxt += ' data-docTypeId="'+docType.docTypeId+'"';
+			inputTxt += ' data-id="'+docType.id+'"';
 			inputTxt += ' data-sfOrder="0"';
 			inputTxt += ' type="text"  ><br></p>';
 			$("#"+tabId).append(inputTxt);
 		} else if(docType.type.startsWith('time')){
 			var inputTxt = '<p> '+docType.columnName+'(tm) From: <input size="4" value="" name="';
-			inputTxt += docType.docTypeId+"_"+docType.columnName+'"';
+			inputTxt += docType.id+"_"+docType.columnName+'"';
 			inputTxt += ' data-type="'+docType.type+'"';
 			inputTxt += ' data-columnName="'+docType.columnName+'"';
-			inputTxt += ' data-docTypeId="'+docType.docTypeId+'"';
+			inputTxt += ' data-id="'+docType.id+'"';
 			inputTxt += ' data-sfOrder="1"';
 			inputTxt += ' type="date"  >';
 					
 			inputTxt += ' To: <input size="4" value="" name="';
-			inputTxt += docType.docTypeId+"_"+docType.columnName+'"';
+			inputTxt += docType.id+"_"+docType.columnName+'"';
 			inputTxt += ' data-type="'+docType.type+'"';
 			inputTxt += ' data-columnName="'+docType.columnName+'"';
-			inputTxt += ' data-docTypeId="'+docType.docTypeId+'"';
+			inputTxt += ' data-id="'+docType.id+'"';
 			inputTxt += ' data-sfOrder="2"';
 			inputTxt += ' type="date"  ><br></p>';
 					
 			$("#"+tabId).append(inputTxt);
 		} else {
 			var inputTxt = '<p> '+docType.columnName+'(nr) From: <input size="4" value="" name="';
-			inputTxt += docType.docTypeId+"_"+docType.columnName+'"';
+			inputTxt += docType.id+"_"+docType.columnName+'"';
 			inputTxt += ' data-type="'+docType.type+'"';
 			inputTxt += ' data-columnName="'+docType.columnName+'"';
-			inputTxt += ' data-docTypeId="'+docType.docTypeId+'"';
+			inputTxt += ' data-id="'+docType.id+'"';
 			inputTxt += ' data-sfOrder="1"';
 			inputTxt += ' type="text"  >';
 			
 			inputTxt += ' To: <input size="4" value="" name="';
-			inputTxt += docType.docTypeId+"_"+docType.columnName+'"';
+			inputTxt += docType.id+"_"+docType.columnName+'"';
 			inputTxt += ' data-type="'+docType.type+'"';
 			inputTxt += ' data-columnName="'+docType.columnName+'"';
-			inputTxt += ' data-docTypeId="'+docType.docTypeId+'"';
+			inputTxt += ' data-id="'+docType.id+'"';
 			inputTxt += ' data-sfOrder="2"';
 			inputTxt += ' type="text"  ><br></p>';
 			

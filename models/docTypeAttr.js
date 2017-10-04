@@ -10,11 +10,11 @@ var db = require('./database.js');
 var tableName = '';
 var columnName = '';
 var type = '';
-var docTypeId = 0;
+var id = 0;
 var columns = ['faf','sff','lololo'];
 
-function DocTypeAttr(docTypeId){
-	this.docTypeId = docTypeId;
+function DocTypeAttr(id){
+	this.id = id;
 }
 
 /**
@@ -42,14 +42,14 @@ function loadDocTypes(tableType, done,connection) {
 	var docTypes = [];
 	var typesArrayToGo = [];
 	
-	var query = "SELECT LTRIM(RTRIM(tc.TableName))  as TableName, tc.ColumnName, tc.Type, tc.DocTypeID, tc.LookupType FROM tableColumns tc  ";
+	var query = "SELECT LTRIM(RTRIM(tc.TableName))  as TableName, tc.ColumnName, tc.Type, tc.DocTypeID, tc.ActiveLayerID, tc.LookupType FROM tableColumns tc  ";
 	if(tableType === "Document"){
 		query += " WHERE tc.TableName LIKE '%GlobalDocFields_GS%'";
 
     	query += " UNION ";
-    	query += " SELECT LTRIM(RTRIM(tc.TableName)) as TableName , tc.ColumnName, tc.Type, tc.DocTypeID, tc.LookupType FROM tableColumns tc  ";
+    	query += " SELECT LTRIM(RTRIM(tc.TableName)) as TableName , tc.ColumnName, tc.Type, tc.DocTypeID, tc.ActiveLayerID, tc.LookupType FROM tableColumns tc  ";
     	query += " left JOIN DocumentType dt ON dt.DocTypeID = tc.DocTypeID   ";
-    	query += " WHERE dt.ACTIVE = 1  AND tc.TableName LIKE '%Document%'  ";
+    	query += " WHERE dt.ACTIVE = 1  AND tc.TableName LIKE '%Document%' AND Searchable = 1 ";
     	query += " ORDER BY tc.DocTypeID  ";
     	
 	} else {
@@ -76,6 +76,10 @@ function loadDocTypes(tableType, done,connection) {
 	  
 	request.on('row', function(columns) {
 		var doc = new DocTypeAttr(0);
+		
+		var docTypeId = 0;
+		var activeLayerID = 0;
+		
 		columns.forEach(function(column) {
 			//console.log('column: '+column.metadata.colName);
 			if (column.value === null) {
@@ -86,7 +90,9 @@ function loadDocTypes(tableType, done,connection) {
 			} else if(column.metadata.colName == 'Type'){
 				doc.type = column.value;
 			} else if(column.metadata.colName == 'DocTypeID'){
-				doc.docTypeId = column.value;
+				docTypeId = column.value;
+			} else if(column.metadata.colName == 'ActiveLayerID'){
+				activeLayerID = column.value;
 			} else if(column.metadata.colName == 'LookupType'){
 				doc.lookupType = column.value;
 			} else {
@@ -94,6 +100,14 @@ function loadDocTypes(tableType, done,connection) {
 			//	doc.name = column.value;
 				
 			}
+			
+			if(doc.tableName.startsWith("GlobalDocFields") || doc.tableName.startsWith("Document")){
+				doc.id = docTypeId;
+			} else {
+				doc.id = activeLayerID;
+			}
+			
+			
 		});
 		
 		//console.log('doc: '+doc.docTypeId+" "+doc.columnName);
@@ -101,11 +115,11 @@ function loadDocTypes(tableType, done,connection) {
 		
 		doc.columns = ['faf','sff','lololo'];
 		
-		if(resTypesCollection.get(doc.docTypeId) == undefined){
-			resTypesCollection.set(doc.docTypeId,[]);
+		if(resTypesCollection.get(doc.id) == undefined){
+			resTypesCollection.set(doc.id,[]);
 			typesArrayToGo.push(doc.tableName);
 		}
-		(resTypesCollection.get(doc.docTypeId)).push(doc);
+		(resTypesCollection.get(doc.id)).push(doc);
 	});
 
 	connection.execSql(request);
@@ -116,7 +130,7 @@ function loadDocTypes(tableType, done,connection) {
  * 
  */
 function loadLookupValuesForDocType(resTypesCollection,tableName,typesArrayToGo, done, connection){
-	console.log("--- "+(new Date()).getHours()+":"+(new Date()).getMinutes()+' loadLookupValues ');
+	//console.log("--- "+(new Date()).getHours()+":"+(new Date()).getMinutes()+' loadLookupValues ');
 	var docTypeColumns = [];
 	
 	var resColumnsCollection = new Map();
@@ -124,7 +138,7 @@ function loadLookupValuesForDocType(resTypesCollection,tableName,typesArrayToGo,
 	//if(typeof value[0].lookupType ==='undefined')
 	
 		commonSearchInputTempTableName = "witemptestdocCommon1";
-		var query = "SELECT LTRIM(RTRIM(tc.TableName)) as TableName, tc.ColumnName, tc.Type, tc.DocTypeID, tc.LookupType, ";
+		var query = "SELECT LTRIM(RTRIM(tc.TableName)) as TableName, tc.ColumnName, tc.Type, tc.DocTypeID,tc.ActiveLayerID, tc.LookupType, ";
 		query += "  [LookupValue]  FROM tableColumns tc ";//where LookupType = '"+value[0].lookupType+"'";
 		query += " left JOIN docfieldlookup dt ON dt.LookupType = tc.ColumnName";
 		query += " WHERE tc.TableName =  '"+tableName+"'";
@@ -144,15 +158,15 @@ function loadLookupValuesForDocType(resTypesCollection,tableName,typesArrayToGo,
 					//var obj = new Object();
 					//obj.key = key;
 					//obj.value = JSON.stringify(value);
-					docId = value.docTypeId;
+					docId = value.id;
 					//console.log('obj.value '+obj.value);
 					columnsForType.push(value);
 				});
 				
 				typesArrayToGo = typesArrayToGo.slice(typesArrayToGo.indexOf(tableName)+1);
-				console.log(typesArrayToGo.indexOf(tableName)+" "+tableName + ' NEXT '+typesArrayToGo);
+				//console.log(typesArrayToGo.indexOf(tableName)+" "+tableName + ' NEXT '+typesArrayToGo);
 				if(typesArrayToGo.length < 1){
-					console.log('DONE');
+					//console.log('DONE');
 					var datares = [];
 					resTypesCollection.forEach((value, key) => {
 						var obj = new Object();
@@ -163,9 +177,9 @@ function loadLookupValuesForDocType(resTypesCollection,tableName,typesArrayToGo,
 					
 					var res1 = {"data":datares};
 				    done(null,res1);
-				    console.log(rowCount + ' rows');
+				    //console.log(rowCount + ' rows');
 				}	else {
-					console.log(docId+' smalldone-=--------------- '+columnsForType);
+					//console.log(docId+' smalldone-=--------------- '+columnsForType);
 					resTypesCollection.set(docId, columnsForType);
 					loadLookupValuesForDocType(resTypesCollection,typesArrayToGo[0],typesArrayToGo, done, connection);
 				}
@@ -179,6 +193,9 @@ function loadLookupValuesForDocType(resTypesCollection,tableName,typesArrayToGo,
 		request.on('row', function(columns) {
 			var doc = new DocTypeAttr(0);
 			var lookupValue = 'dd';
+			var docTypeId = 0;
+			var activeLayerID = 0;
+			
 			columns.forEach(function(column) {
 				//console.log('column: '+column.metadata.colName);
 				if (column.value === null) {
@@ -189,16 +206,22 @@ function loadLookupValuesForDocType(resTypesCollection,tableName,typesArrayToGo,
 				} else if(column.metadata.colName == 'Type'){
 					doc.type = column.value;
 				} else if(column.metadata.colName == 'DocTypeID'){
-					doc.docTypeId = column.value;
+					docTypeId = column.value;
+				} else if(column.metadata.colName == 'ActiveLayerID'){
+					activeLayerID = column.value;
 				} else if(column.metadata.colName == 'LookupType'){
 					doc.lookupType = column.value;
-				} else if(column.metadata.colName == 'LookupValue'){
-					lookupValue = column.value;
+				} else {
 					
 				}
 			});
 			
-			//doc.columns = ['faf','sff','lololo'];
+			
+			if(doc.tableName.startsWith("GlobalDocFields") || doc.tableName.startsWith("Document")){
+				doc.id = docTypeId;
+			} else {
+				doc.id = activeLayerID;
+			}
 			
 			if(resColumnsCollection.get(doc.columnName) == undefined){
 				doc.columns = [lookupValue];

@@ -5,14 +5,23 @@ const MAPOBJ_SPDLG_OBJNAME = "MAPOBJ_SPDLG_OBJNAME";
 
 $( document ).ready(function() {
 	
+	$(function() {
+		var parameters = { id:1 };
+		$.getJSON( '/docProcessor/loadMapTypes',parameters, function(data) {
+			loadDocTypesCollection("mapSearchDlg",data);
+			registerDocSearchDlgEvents();
+			$("#mapSearchDlg .tabsPanel li:eq(1) a").tab('show');
+		});
+	});
+	
 	mapobjSPLayerId = 0;
 	
 	var cols = [ { "name": "id","data": "id" },
                  { "data": "name", "width":"30%" }
                  ];
-	initDocsTable(cols);
+	initMapObjsTable(cols);
 	
-	$("#mapObjTblForm .layersCombo").on('change',function () {
+	$("#mapObjTblForm .mapLayersCombo").on('change',function () {
 		var d = docTypesCollection.get(dlgName+"_"+$(this).val());
 		
 		docsTable.destroy();
@@ -35,17 +44,7 @@ $( document ).ready(function() {
 		//addNewTab("docSearchDlg", $(this).val());
 	});
 	 
-	$(function() {
-		var parameters = { id:1 };
-		$.getJSON( '/docProcessor/loadMapTypes',parameters, function(data) {
-			loadDocTypesCollection("mapSearchDlg",data);
-			//addNewTab("docSearchDlg");
-			//first tab is selected:
-			registerDocSearchDlgEvents();
 
-			$("#mapSearchDlg .tabsPanel li:eq(1) a").tab('show');
-		});
-	});
 	
 	
 	///// MAIN FIRE SEARCH DOC /////////////////////////
@@ -114,10 +113,10 @@ $( document ).ready(function() {
 					obj.value = this.value;
 				}
 				obj.columnName = this.getAttribute('data-columnName');
-				obj.docTypeId = this.getAttribute('data-docTypeId');
+				obj.id = this.getAttribute('data-id');
 				obj.sfOrder = this.getAttribute('data-sfOrder');
 				obj.type = this.getAttribute('data-type');
-				if(obj.docTypeId == 0){
+				if(obj.id == 0){
 					docGlobalSPDlg.push(obj);
 				} else {
 					docSPDlg.push(obj);

@@ -114,10 +114,10 @@ $( document ).ready(function() {
 					obj.value = this.value;
 				}
 				obj.columnName = this.getAttribute('data-columnName');
-				obj.docTypeId = this.getAttribute('data-docTypeId');
+				obj.id = this.getAttribute('data-id');
 				obj.sfOrder = this.getAttribute('data-sfOrder');
 				obj.type = this.getAttribute('data-type');
-				if(obj.docTypeId == 0){
+				if(obj.id == 0){
 					docGlobalSPDlg.push(obj);
 				} else {
 					docSPDlg.push(obj);
