@@ -18,7 +18,7 @@ function initDocsTable(cols){
 			var obj = new Object();
 			var chApplySD = $("#docTableSearchForm [name='applyDocSearchChk']");
 			
-			obj.DOC_SP_DOC_TYPE = docSPdocType;
+			obj.DOC_SP_DOC_TYPE = $("#docTableSearchForm .docTypesCombo").val();
 			sa.push(obj);
 
 			if(chApplySD.is(':checked')){
@@ -58,8 +58,8 @@ function initMapObjsTable(cols){
 			var obj = new Object();
 			var chApplySD = $("#mapObjTblForm [name='applyMapObjSearchChk']");
 			
-			obj.DOC_SP_DOC_TYPE = docSPdocType;
-			sa.push(obj);
+			//obj.DOC_SP_DOC_TYPE = docSPdocType;
+			//sa.push(obj);
 
 			if(chApplySD.is(':checked')){
 				if(typeof docCommonDlgSP !== "undefined"){

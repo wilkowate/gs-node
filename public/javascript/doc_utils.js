@@ -5,9 +5,7 @@ const DOC_SEARCH_DIALOG_TYPE_FIELDS = "DOC_SEARCH_DIALOG_TYPE_FIELDS";
 const DOC_SEARCH_DIALOG_GLOBAL_FIELDS = "DOC_SEARCH_DIALOG_GLOBAL_FIELDS";
 
 $( document ).ready(function() {
-	
-	docSPdocType = 0;
-	
+
 	var cols = [
                 { "name": "id","data": "id" },
                  { "data": "name", "width":"30%" }
@@ -32,8 +30,7 @@ $( document ).ready(function() {
 		}
 		
 		$('#docs thead').html(""+header+"</tr>");
-		//alert("col "+JSON.stringify(cols));
-		docSPdocType = $(this).val();
+
 		initDocsTable(cols);
 		//addNewTab("docSearchDlg", $(this).val());
 	});

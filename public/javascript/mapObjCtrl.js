@@ -30,8 +30,7 @@ $( document ).ready(function() {
 		}
 		
 		$('#docs thead').html(""+header+"</tr>");
-		//alert("col "+JSON.stringify(cols));
-		docSPdocType = $(this).val();
+
 		initDocsTable(cols);
 		//addNewTab("docSearchDlg", $(this).val());
 	});
