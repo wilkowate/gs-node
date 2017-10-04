@@ -8,7 +8,6 @@
 <div class="tab-content ">
 	<div id="menu2" class="tab-pane fade in active  ">
 	<form id="docTableSearchForm" > 
-	
 	<span> Doc Type:</span> <select class=" pad3 docTypesCombo">
 	<option value="0" >All</option> </select>
 	<span> Apply Search Criteria:</span> <input name="applyDocSearchChk"  type="checkbox" checked >
@@ -21,23 +20,27 @@
 				<th>id</th>
 			</tr>
 		</thead>
-
 	</table>
 	</div>
 	
 	<div id="home" class="tab-pane fade ">
 		
 	</div>
+	
 	<div id="menu1" class="tab-pane fade">
-		table(id="mapObjects",class="table table-striped table-condensed table-hover")
-			thead
-			tr
-				th Name
-				th id
-		tbody
-		tr
-		td
-		td
+		<form id="mapObjTblForm" > 
+			<span> Map layer:</span> <select class=" pad3 layersCombo">
+			<option value="0" >All</option> </select>
+			<span> Apply Search Criteria:</span> <input name="applyMapObjSearchChk"  type="checkbox" checked >
+		</form>
+		<table class="display table-striped table" id="mapObjsTbl">
+			<thead>
+				<tr>
+					<th>name</th>
+					<th>id</th>
+				</tr>
+			</thead>
+		</table>
 	</div>
 
 </div>
