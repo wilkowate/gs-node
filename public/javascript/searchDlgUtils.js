@@ -16,12 +16,10 @@ function initDocsTable(cols){
 
 			var sa = [];
 			var obj = new Object();
-			var chApplySD = $("#docTableSearchForm [name='applySearchCriteria']");
+			var chApplySD = $("#docTableSearchForm [name='applyDocSearchChk']");
 			
-			//if(docSPdocType > 0){
-				obj.DOC_SP_DOC_TYPE = docSPdocType;
-				sa.push(obj);
-			//}
+			obj.DOC_SP_DOC_TYPE = docSPdocType;
+			sa.push(obj);
 
 			if(chApplySD.is(':checked')){
 				if(typeof docCommonDlgSP !== "undefined"){

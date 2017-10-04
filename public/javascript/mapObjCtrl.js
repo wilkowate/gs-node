@@ -1,15 +1,13 @@
-const DOC_TYPE_ID = "DocTypeID";
+const ACTIVE_LAYER_ID = "ActivelayerID";
 
-const DOC_SEARCH_DIALOG_COMMON_FORM = "DOC_SEARCH_DIALOG_COMMON_FORM";
-const DOC_SEARCH_DIALOG_TYPE_FIELDS = "DOC_SEARCH_DIALOG_TYPE_FIELDS";
-const DOC_SEARCH_DIALOG_GLOBAL_FIELDS = "DOC_SEARCH_DIALOG_GLOBAL_FIELDS";
+const MAPOBJ_SPDLG_OBJNAME = "MAPOBJ_SPDLG_OBJNAME";
+
 
 $( document ).ready(function() {
 	
-	docSPdocType = 0;
+	mapobjSPLayerId = 0;
 	
-	var cols = [
-                { "name": "id","data": "id" },
+	var cols = [ { "name": "id","data": "id" },
                  { "data": "name", "width":"30%" }
                  ];
 	initDocsTable(cols);
@@ -51,8 +49,8 @@ $( document ).ready(function() {
 	});
 	
 	
-	///// submit doc search dialog form /////////////////////////
-	$("#submitDocSPDlg").on('click',function(event){
+	///// MAIN FIRE SEARCH DOC /////////////////////////
+	$("#submitMapObjSPDlg").on('click',function(event){
 		
 		$("#fireDocSearchBtn").attr('src',"images/icons/DEV_SD_red.gif");
 		//event.preventDefault() ;

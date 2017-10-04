@@ -19,7 +19,8 @@ var mapObjectSearchDialogTable = "null";
 var searchObject  = "null";
 var selectedMapObjsTempTableName = "null";
 var selectedDocsTempTableName = "null";
-
+var docsMore0 = 0;
+var layerId = 0;
 
 var userName = "irena";
 var sessionId = 0;
@@ -213,7 +214,7 @@ function executeMainSearchMapObjSP( connection){
 	var mainQuery = " exec V5_SearchForMapObjects  "+sessionId+","+mapObjectSearchDialogTable+", "+searchObject+", "+selectedMapObjsTempTableName;
 	mainQuery += " , "+selectedDocsTempTableName+" , 0, null, 0";
 	mainQuery += " , "+docsMore0+" , "+sortByColumn+",";
-	mainQuery += pageNumber+","+pageSize+", "+countParam+", "+layerId+", "+userName+" ,?";
+	mainQuery += pageNumber+","+pageSize+", "+countParam+", "+layerId+", "+userName+" ,@number OUTPUT";
 		
 	console.log(' query:'+mainQuery);
 	
@@ -250,20 +251,7 @@ function executeMainSearchMapObjSP( connection){
 	request.on('row', function(columns) {
 		var doc = new Document(1);
 		columns.forEach(function(column) {
-			 if (column.metadata.colName === "Doc_Name") {
-				//console.log('row '+column.value);
-				doc.name = column.value.substring(0, 50);;
-			}	else if (column.metadata.colName === "Doc_ID") {
-					//console.log('row '+column.value);
-				doc.id = column.value;
-			}	else if (column.metadata.colName === "Hist_FileName") {
-				//console.log('row '+column.value);
-				doc.Hist_FileName = column.value;
-			} else {
-				doc[column.metadata.colName] = column.value;
-			}
-			
-			
+			 doc[column.metadata.colName] = column.value;
 		});
 		data1.push(doc);
 	});
