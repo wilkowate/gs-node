@@ -12,7 +12,7 @@ $( document ).ready(function() {
                  ];
 	initDocsTable(cols);
 	
-	$("#docTableSearchForm .docTypesCombo").on('change',function () {
+	$("#mapObjTblForm .layersCombo").on('change',function () {
 		var d = docTypesCollection.get(dlgName+"_"+$(this).val());
 		
 		docsTable.destroy();
@@ -37,13 +37,13 @@ $( document ).ready(function() {
 	 
 	$(function() {
 		var parameters = { id:1 };
-		$.getJSON( '/docProcessor/loadDocTypes',parameters, function(data) {
-			loadDocTypesCollection("docSearchDlg",data);
+		$.getJSON( '/docProcessor/loadMapTypes',parameters, function(data) {
+			loadDocTypesCollection("mapSearchDlg",data);
 			//addNewTab("docSearchDlg");
 			//first tab is selected:
 			registerDocSearchDlgEvents();
 
-			$("#tabsPanel li:eq(1) a").tab('show');
+			$("#mapSearchDlg .tabsPanel li:eq(1) a").tab('show');
 		});
 	});
 	

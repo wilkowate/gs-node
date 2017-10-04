@@ -43,7 +43,7 @@ $( document ).ready(function() {
 			//first tab is selected:
 			registerDocSearchDlgEvents();
 
-			$("#tabsPanel li:eq(1) a").tab('show');
+			$("#docSearchDlg .tabsPanel li:eq(1) a").tab('show');
 		});
 	});
 	

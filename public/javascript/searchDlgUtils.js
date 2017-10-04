@@ -117,11 +117,28 @@ function loadDocTypesCollection(dlgName, data){
 	});
 }
 
+/**
+ * 
+ * @param dlgName
+ * @param data
+ */
+function loadMapLayersCollection(dlgName, data){			
+	mapLayersCollection = new Map();
+	$.each(data.data, function(i, layer) {
+		var a = $.parseJSON(layer.value);
+		docTypesCollection.set(dlgName+"_"+a[0].docTypeId,a);
+		if(a[0].docTypeId == 0){
+			addNewTab("mapSearchDlg", 0);
+		}
+		$(".docTypesCombo").append('<option value="'+a[0].docTypeId+'">'+a[0].tableName+'</option>');
+	});
+}
+
 function addNewTab(dlgName, typeName) {
 	var a = docTypesCollection.get(dlgName+"_"+typeName);
-	populateSearchTab("docSearchDlg", a);
+	populateSearchTab(dlgName, a);
 	var nr = $("#"+dlgName+" .tabNames li").length - 1;
-	$("#tabsPanel li:eq("+nr+") a").tab('show');
+	$("#"+dlgName+" .tabsPanel li:eq("+nr+") a").tab('show');
 }
 
 
@@ -223,10 +240,8 @@ function registerCloseEvent(dlgName) {
         var tabContentId = $(this).parent().attr("href");
         //alert("tabContentId "+tabContentId);
         $(this).parent().parent().remove(); //remove li of tab
-       // $('#'+dlgName+' #tabsPanel a:last').tab('show'); // Select first tab
         $(tabContentId).remove(); //remove respective tab content
-        
-        $("#tabsPanel li:eq(0) a").tab('show');
+        $("#"+dlgName+" .tabsPanel li:eq(0) a").tab('show');
 
     });
 }
