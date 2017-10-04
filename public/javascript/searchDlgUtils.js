@@ -43,6 +43,45 @@ function initDocsTable(cols){
 		 } );
 }
 
+/**
+ * 
+ * @param cols
+ */  
+function initMapObjsTable(cols){
+	
+	mapObjsTbl = $('#mapObjsTbl').DataTable( {
+		"bProcessing": true,
+		"sAjaxSource": "/mapObjects/search",
+		"fnServerParams": function ( aoData ) {
+
+			var sa = [];
+			var obj = new Object();
+			var chApplySD = $("#mapObjTblForm [name='applyMapObjSearchChk']");
+			
+			obj.DOC_SP_DOC_TYPE = docSPdocType;
+			sa.push(obj);
+
+			if(chApplySD.is(':checked')){
+				if(typeof docCommonDlgSP !== "undefined"){
+					obj.DOC_SEARCH_DIALOG_COMMON_FORM = docCommonDlgSP;
+				}
+				if(typeof docGlobalSPDlg !== "undefined"){
+					obj.DOC_SEARCH_DIALOG_GLOBAL_FIELDS = docGlobalSPDlg;
+				}
+				if(typeof docSPDlg !== "undefined"){
+					obj.DOC_SEARCH_DIALOG_TYPE_FIELDS = docSPDlg;
+				}
+				sa.push(obj);
+			}
+			 aoData.push( { "name": "search_params", "value": sa } );
+        },
+      // "fnServerParams": paramsArray,
+	     "bServerSide": true,
+	     "scrollX": true,
+	    "scrollY": "200px",
+	    "columns": cols
+		 } );
+}
 
 function registerDocSearchDlgEvents(){
 
@@ -67,7 +106,7 @@ function loadDocTypesCollection(dlgName, data){
 	$.each(data.data, function(i, layer) {
 		var a = $.parseJSON(layer.value);
 		//alert(i+'id '+a[0].docTypeId);
-		docTypesCollection.set("docTypeTabId"+a[0].docTypeId,a);
+		docTypesCollection.set(dlgName+"_"+a[0].docTypeId,a);
 		
 		if(a[0].docTypeId == 0){
 			addNewTab("docSearchDlg", 0);
@@ -79,7 +118,7 @@ function loadDocTypesCollection(dlgName, data){
 }
 
 function addNewTab(dlgName, typeName) {
-	var a = docTypesCollection.get("docTypeTabId"+typeName);
+	var a = docTypesCollection.get(dlgName+"_"+typeName);
 	populateSearchTab("docSearchDlg", a);
 	var nr = $("#"+dlgName+" .tabNames li").length - 1;
 	$("#tabsPanel li:eq("+nr+") a").tab('show');
@@ -90,7 +129,7 @@ function populateSearchTab(dlgName, a){
 	//var a = $.parseJSON(layer.value);
 	//docTypesMap.set(a[0].tableName,a);
 	
-	var tabId = "docTypeTabId"+a[0].docTypeId;
+	var tabId = dlgName+"_"+a[0].docTypeId;
 	
 	var tabHeader = '<li><a data-toggle="tab" href="#'+tabId+'">';
 	

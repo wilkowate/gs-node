@@ -15,7 +15,7 @@ $( document ).ready(function() {
 	initDocsTable(cols);
 	
 	$("#docTableSearchForm .docTypesCombo").on('change',function () {
-		var d = docTypesCollection.get("docTypeTabId"+$(this).val());
+		var d = docTypesCollection.get("docSearchDlg_"+$(this).val());
 		
 		docsTable.destroy();
 		
