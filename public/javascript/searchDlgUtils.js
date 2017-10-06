@@ -58,8 +58,8 @@ function initMapObjsTable(cols){
 			var obj = new Object();
 			var chApplySD = $("#mapObjTblForm [name='applyMapObjSearchChk']");
 			
-			//obj.DOC_SP_DOC_TYPE = docSPdocType;
-			//sa.push(obj);
+			obj.MAP_SP_LAYER_ID = $("#mapObjTblForm .mapLayersCombo").val();
+			sa.push(obj);
 
 			if(chApplySD.is(':checked')){
 				if(typeof docCommonDlgSP !== "undefined"){
@@ -123,16 +123,21 @@ function loadMapLayersCollection(dlgName, data){
 	mapLayersCollection = new Map();
 	$.each(data.data, function(i, layer) {
 		var a = $.parseJSON(layer.value);
-		docTypesCollection.set(dlgName+"_"+a[0].id,a);
+		mapLayersCollection.set(dlgName+"_"+a[0].id,a);
 		if(a[0].id == 0){
-			addNewTab("mapSearchDlg", 0);
+			addNewTab(dlgName, 0);
 		}
 		$(".mapLayersCombo").append('<option value="'+a[0].id+'">'+a[0].tableName+'</option>');
 	});
 }
 
 function addNewTab(dlgName, typeName) {
-	var a = docTypesCollection.get(dlgName+"_"+typeName);
+	var a = null;
+	if(dlgName === "docSearchDlg"){
+		a = docTypesCollection.get(dlgName+"_"+typeName);
+	} else {
+		a = mapLayersCollection.get(dlgName+"_"+typeName);
+	}
 	populateSearchTab(dlgName, a);
 	var nr = $("#"+dlgName+" .tabNames li").length - 1;
 	$("#"+dlgName+" .tabsPanel li:eq("+nr+") a").tab('show');

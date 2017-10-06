@@ -32,7 +32,6 @@ var totalRowsCount = 0;
 //add functionality to those variables:
 var pageNumber = 1;
 var sortByColumn = "Name";
-var documentTypeId = 1;
 var callbackDone;
 var sEcho1;
 
@@ -68,131 +67,50 @@ exports.get = function(search_params,iDisplayStart,iDisplayLength,sEcho, done) {
 }
 
 /**
- * this is inner function to fill temp table with data
- * 
- * @param connection
- */
-function createFillMapObjectsTempTable(connection, selectedMapObjsTempTableName, values){
-	console.log("createFillMapObjectsTempTable");
-	
-	var query = "SELECT  Object, Layer FROM [wells_eom_shp] ";
-	/* Begin transaction */
-	connection.beginTransaction(function(err) {
-		
-		console.log("beginTransaction");
-		
-		if (err) { throw err; }
-	  
-		var sqlCreateTempTable = "IF EXISTS( DROP TABLE [" + selectedMapObjsTempTableName;
-		sqlCreateTempTable += "] )";
-			
-		sqlCreateTempTable = "CREATE TABLE [" + selectedMapObjsTempTableName;
-		sqlCreateTempTable += "] (";
-		sqlCreateTempTable += " LayerID int, [Object] nvarchar(250))";
-		
-		connection.query(sqlCreateTempTable, function(err, result) {
-			if (err) { 
-				console.log("err");
-				connection.rollback(function() {
-					throw err;
-				});
-			}
-	 
-			var log = result.insertId;
-	 
-			connection.query('INSERT INTO ' + selectedMapObjsTempTableName +' SET Object=?', 'dd', function(err, result) {
-				if (err) { 
-					connection.rollback(function() {
-						throw err;
-					});
-				}  
-				connection.commit(function(err) {
-					if (err) { 
-						connection.rollback(function() {
-							throw err;
-						});
-					}
-					console.log('Transaction Complete.');
-					connection.end();
-				});
-			});
-		});
-	});
-
-}
-
-/**
  * 
  * @param done
  * @param connection
  */
 function loadMapObjects(iDisplayStart,iDisplayLength,done,connection) {
-	
-	console.log(iDisplayStart + ' iDisplayStart');
-	
-	iDisplayStart = 1;
-	iDisplayLength = 50;
-	
-	var data1 = [];
-	
-	values = ['21','22','333'];
-	createFillMapObjectsTempTable(connection, "olatestmaptemtable", values);
-	
-	var query = "SELECT  Object, Layer FROM [wells_eom_shp] ";
-	
-	query += " ORDER BY Object OFFSET "+iDisplayStart+" ROWS FETCH NEXT "+iDisplayLength+" ROWS ONLY";
-	
-	//var mainQuery = " exec V5_SearchForMapObjects  "+sessionId+","+mapObjectSearchDialogTable+", "+searchObject+", "+selectedMapObjsTempTableName;
-	//mainQuery += " , "+selectedDocsTempTableName+" , 0, null, 0";
-	//mainQuery+=" , "+docsMore0+" , "+sortByColumn+",";
-	//mainQuery += pageNumber+","+pageSize+", "+countParam+", "+layerId+", "+userName+" ,?";
-	
-	
-	var draw = iDisplayStart/iDisplayLength + 1;
-	
 
+	if(typeof searchParamsArray !== "undefined"){
+		layerId = searchParamsArray[0].MAP_SP_LAYER_ID;
+		createMapObjSPDlgTempTable(connection);
+	} else {
+		executeMainSearchSP(connection);
+	}	
+}
+
+/**
+ * mapObjectSearchDialogTable
+ * 
+ * @param connection
+ */
+function createMapObjSPDlgTempTable( connection){
+	console.log("--- "+(new Date()).getHours()+":"+(new Date()).getMinutes()+' mapObjectSearchDialogTable');
 	
-	 console.log(query + ' query111');
+	var docTypesArray = searchParamsArray[0].DOC_SEARCH_DIALOG_COMMON_FORM;
+	//console.log('docTypesArray.length '+docTypesArray);
+	if(typeof docTypesArray !== "undefined" && docTypesArray.length > 0){
+		mapObjectSearchDialogTable = "wimapObjectSearchDialogTable";
+		var sqlCreateTempTable = " if not exists (select * from sysobjects where name='"+mapObjectSearchDialogTable;
+		sqlCreateTempTable += "' ) CREATE TABLE [" + mapObjectSearchDialogTable;
+		sqlCreateTempTable += "] ( "+ " SearchField nvarchar(max),";
+		sqlCreateTempTable += " SearchFieldType nvarchar(10),";
+		sqlCreateTempTable += " SearchValue nvarchar(max),";
+		sqlCreateTempTable += " SearchFieldOrder tinyint )";
 	
-	  request = new Request(query, function(err, rowCount) {
-	    if (err) {
-	      console.log(err);
-	    } else {
-	    	
-		    var res1 ={
-		    		"draw": draw,
-		    		"iTotalRecords": "200",
-		    		"iTotalDisplayRecords": "200",
-		    		"aaData":data1
-		    	  };
-		    
-		    console.log(JSON.stringify(data1));
-		    done(null,res1);
-	      console.log(rowCount + ' rows');
-	    }
-	    connection.close();
-	  });
-
-	  request.on('row', function(columns) {
-		  var doc = new MapObject(1);
-	    columns.forEach(function(column) {
-	      if (column.value === null) {
-
-	      } else if(column.metadata.colName == 'Layer'){
-	    	  doc.layerName = column.value;
-	      } else if(column.metadata.colName == 'Object'){
-	    	  doc.object = column.value;
-	      }
-	    });
-	    data1.push(doc);
-
-	  });
-	  
-	  request.on('done', function (rowCount, more, rows) { 
-		  console.log('DONE');
-	  });
-
-	connection.execSql(request);
+		request = new Request(sqlCreateTempTable, function(err, rowCount) {
+			if (err) {
+				console.log(err);
+			} else {
+				populateDocCommonTempTable(docTypesArray, connection);
+			}
+		});
+		connection.execSql(request);
+	} else {
+		createDocGlobalTempTable(connection);
+	}
 }
 
 /**

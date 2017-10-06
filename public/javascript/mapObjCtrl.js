@@ -8,7 +8,7 @@ $( document ).ready(function() {
 	$(function() {
 		var parameters = { id:1 };
 		$.getJSON( '/docProcessor/loadMapTypes',parameters, function(data) {
-			loadDocTypesCollection("mapSearchDlg",data);
+			loadMapLayersCollection("mapSearchDlg",data);
 			registerDocSearchDlgEvents();
 			$("#mapSearchDlg .tabsPanel li:eq(1) a").tab('show');
 		});
@@ -22,9 +22,9 @@ $( document ).ready(function() {
 	initMapObjsTable(cols);
 	
 	$("#mapObjTblForm .mapLayersCombo").on('change',function () {
-		var d = docTypesCollection.get(dlgName+"_"+$(this).val());
+		var d = mapLayersCollection.get("mapSearchDlg_"+$(this).val());
 		
-		docsTable.destroy();
+		mapObjsTbl.destroy();
 		
 		var header = "<tr><th>Doc_ID</th><th>Name</th>";
 		var cols = [
@@ -38,9 +38,9 @@ $( document ).ready(function() {
 			header += "<th>"+d[i].columnName+"</th>";
 		}
 		
-		$('#docs thead').html(""+header+"</tr>");
+		$('#mapObjsTbl thead').html(""+header+"</tr>");
 
-		initDocsTable(cols);
+		initMapObjsTable(cols);
 		//addNewTab("docSearchDlg", $(this).val());
 	});
 	 
