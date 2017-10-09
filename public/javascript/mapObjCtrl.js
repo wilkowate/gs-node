@@ -16,8 +16,8 @@ $( document ).ready(function() {
 	
 	mapobjSPLayerId = 0;
 	
-	var cols = [ { "name": "id","data": "id" },
-                 { "data": "name", "width":"30%" }
+	var cols = [ { "data": "Object", "name": "Object" },
+                 { "data": "Layer", "width":"30%" }
                  ];
 	initMapObjsTable(cols);
 	
@@ -27,9 +27,8 @@ $( document ).ready(function() {
 		mapObjsTbl.destroy();
 		
 		var header = "<tr><th>Doc_ID</th><th>Name</th>";
-		var cols = [
-                { "name": "Doc_id","data": "id" },
-		            { "data": "name", "width":"30%" }
+		var cols = [{ "data": "Object", "name": "Object" },
+	                 { "data": "Layer", "width":"30%" }
 	                 ];
 		
 		for(i = 0; i<d.length; i++){
@@ -44,56 +43,43 @@ $( document ).ready(function() {
 		//addNewTab("docSearchDlg", $(this).val());
 	});
 	 
-
+	$("#fireMapSearchBtn").on("click", function() {
+		$("#fireMapSearchBtn").attr('src',"images/icons/map-search-ok.gif");		 
+		mapObjsTbl.draw(1);
+	});
 	
 	
 	///// MAIN FIRE SEARCH DOC /////////////////////////
 	$("#submitMapObjSPDlg").on('click',function(event){
 		
-		$("#fireDocSearchBtn").attr('src',"images/icons/DEV_SD_red.gif");
-		//event.preventDefault() ;
-		//event.stopPropagation();
-		docCommonDlgSP = [];
-		docSPDlg = [];
-		docGlobalSPDlg = [];
+		$("#fireMapSearchBtn").attr('src',"images/icons/map-search-fire.gif");
+		mapObjCommonSPDlg = [];
+		mapObjSPDlg = [];
 		
 		//////////////// common form ///////////////////////////////////
-		var include = false;
+		var include = true;
 		var searchForObj = {};
-		$("#docCommonSearchForm").find(':input').each(function(i) {
+		$("#mapCommonSearchForm").find(':input').each(function(i) {
 			if(this.value != ""){
 				var obj = { name: this.name};
 				
-				if(this.name === 'SearchFor'){
+				if(this.name === 'MapObjName'){
 					searchForObj = { name: this.name};
 					searchForObj.value = this.value;
 					searchForObj.type = 'text';
 					searchForObj.sfOrder = '0';
 					searchForObj.columnName = 'SearchFor';
 				}
-				if(this.name.startsWith("Include")){
-					if(this.checked){
-						obj = { name: this.name};
-						obj.value = this.getAttribute('data-columnName');
-						obj.columnName = 'Include';
-						obj.type = 'NULL';//this.getAttribute('data-type');
-						obj.sfOrder = this.getAttribute('data-sfOrder');
-						docCommonDlgSP.push(obj);
-						include = true;
-					}
-				}
 			}
 		});
 		if(include){
-			docCommonDlgSP.push(searchForObj);
+			mapObjCommonSPDlg.push(searchForObj);
 		}
 		//////////////// end common form ////////////////////
 		
-		
-		$("#docTypesSearchForm").find(':input').each(function(i) {
-			
-			//alert(this.type +"  "+ this.value+" n: "+this.name);
-			
+
+		$("#mapLayersSearchForm").find(':input').each(function(i) {
+			//alert('submit'+this.value);
 			if(this.value != "" && this.name != ""){
 				var obj = { name: this.name};
 				
@@ -101,7 +87,6 @@ $( document ).ready(function() {
 					var list= this.selectedOptions;
 					var tempValue = "";
 					for (var i = 0; i < list.length; i++) {
-						//alert('list '+list[i].value);
 						if(i>0){
 							tempValue += ",";
 						}
@@ -116,11 +101,8 @@ $( document ).ready(function() {
 				obj.id = this.getAttribute('data-id');
 				obj.sfOrder = this.getAttribute('data-sfOrder');
 				obj.type = this.getAttribute('data-type');
-				if(obj.id == 0){
-					docGlobalSPDlg.push(obj);
-				} else {
-					docSPDlg.push(obj);
-				}
+				mapObjSPDlg.push(obj);
+				
 			}
 		});
 	});

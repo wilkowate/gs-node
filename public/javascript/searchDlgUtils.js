@@ -62,14 +62,11 @@ function initMapObjsTable(cols){
 			sa.push(obj);
 
 			if(chApplySD.is(':checked')){
-				if(typeof docCommonDlgSP !== "undefined"){
-					obj.DOC_SEARCH_DIALOG_COMMON_FORM = docCommonDlgSP;
+				if(typeof mapObjCommonSPDlg !== "undefined"){
+					obj.MAP_SP_DLG_COMMON_FIELDS = mapObjCommonSPDlg;
 				}
-				if(typeof docGlobalSPDlg !== "undefined"){
-					obj.DOC_SEARCH_DIALOG_GLOBAL_FIELDS = docGlobalSPDlg;
-				}
-				if(typeof docSPDlg !== "undefined"){
-					obj.DOC_SEARCH_DIALOG_TYPE_FIELDS = docSPDlg;
+				if(typeof mapObjSPDlg !== "undefined"){
+					obj.MAP_SP_DLG_FIELDS = mapObjSPDlg;
 				}
 				sa.push(obj);
 			}

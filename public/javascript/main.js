@@ -31,10 +31,7 @@ var showObjects =  function() {
 	 
 
 	 
-	 $("#fireDocSearchBtn").on("click", function() {
-		 $("#fireDocSearchBtn").attr('src',"images/icons/DEV_SD_green.png");		 
-		 docsTable.draw(1);
-	 });
+
 	 
      $("#categories_table tbody").on("mousedown", "tr", function() {
 

@@ -47,6 +47,10 @@ $( document ).ready(function() {
 		});
 	});
 	
+	$("#fireDocSearchBtn").on("click", function() {
+		$("#fireDocSearchBtn").attr('src',"images/icons/DEV_SD_green.png");		 
+		docsTable.draw(1);
+	});
 	
 	///// submit doc search dialog form /////////////////////////
 	$("#submitDocSPDlg").on('click',function(event){

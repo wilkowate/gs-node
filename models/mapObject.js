@@ -4,6 +4,7 @@
 
 var Connection = require('tedious').Connection;
 var Request = require('tedious').Request;
+var TYPES = require('tedious').TYPES;
 
 var db = require('./database.js');
 
@@ -31,7 +32,7 @@ var totalRowsCount = 0;
 
 //add functionality to those variables:
 var pageNumber = 1;
-var sortByColumn = "Name";
+var sortByColumn = "Object";
 var callbackDone;
 var sEcho1;
 
@@ -41,7 +42,9 @@ var sEcho1;
 exports.get = function(search_params,iDisplayStart,iDisplayLength,sEcho, done) {
 	var connection = db.getConnection();
 	
-	sortByColumn = "Name";
+	console.log('!!!!!!!!!!!!!!!search_params: '+JSON.stringify(search_params));
+	
+	sortByColumn = "Object";
 	documentTypeId = 1;
 	
 	pageSize = iDisplayLength;
@@ -77,7 +80,7 @@ function loadMapObjects(iDisplayStart,iDisplayLength,done,connection) {
 		layerId = searchParamsArray[0].MAP_SP_LAYER_ID;
 		createMapObjSPDlgTempTable(connection);
 	} else {
-		executeMainSearchSP(connection);
+		executeMainSearchMapObjSP(connection);
 	}	
 }
 
@@ -89,13 +92,13 @@ function loadMapObjects(iDisplayStart,iDisplayLength,done,connection) {
 function createMapObjSPDlgTempTable( connection){
 	console.log("--- "+(new Date()).getHours()+":"+(new Date()).getMinutes()+' mapObjectSearchDialogTable');
 	
-	var docTypesArray = searchParamsArray[0].DOC_SEARCH_DIALOG_COMMON_FORM;
+	var docTypesArray = searchParamsArray[0].MAP_SP_DLG_FIELDS;
 	//console.log('docTypesArray.length '+docTypesArray);
 	if(typeof docTypesArray !== "undefined" && docTypesArray.length > 0){
 		mapObjectSearchDialogTable = "wimapObjectSearchDialogTable";
 		var sqlCreateTempTable = " if not exists (select * from sysobjects where name='"+mapObjectSearchDialogTable;
 		sqlCreateTempTable += "' ) CREATE TABLE [" + mapObjectSearchDialogTable;
-		sqlCreateTempTable += "] ( "+ " SearchField nvarchar(max),";
+		sqlCreateTempTable += "] ( SearchSection nvarchar(256), "+ " SearchField nvarchar(max),";
 		sqlCreateTempTable += " SearchFieldType nvarchar(10),";
 		sqlCreateTempTable += " SearchValue nvarchar(max),";
 		sqlCreateTempTable += " SearchFieldOrder tinyint )";
@@ -104,15 +107,55 @@ function createMapObjSPDlgTempTable( connection){
 			if (err) {
 				console.log(err);
 			} else {
-				populateDocCommonTempTable(docTypesArray, connection);
+				populateMapObjSPDlgTempTable(docTypesArray, connection);
 			}
 		});
 		connection.execSql(request);
 	} else {
-		createDocGlobalTempTable(connection);
+		executeMainSearchMapObjSP(connection);
 	}
 }
 
+/**
+ * 
+ * @param docTypesArray
+ * @param connection
+ */
+function populateMapObjSPDlgTempTable( docTypesArray, connection){
+	
+	console.log("--- populateMapObjSPDlgTempTable: "+(new Date()).getHours()+":"+(new Date()).getMinutes());
+	
+	var q = "";
+
+	for (var i = 0, len = docTypesArray.length; i < len; i++) {
+		obj = docTypesArray[i];
+		q += " INSERT INTO " + mapObjectSearchDialogTable + " (SearchSection ,SearchField,SearchFieldType,SearchValue,SearchFieldOrder) VALUES (" ;
+		q += obj.id + ",'"+obj.columnName+"','text','"+obj.value+"',0);";
+	}
+	
+	
+	
+	//if layer in combobox is selected
+	//insertToDB(searchSection, null, null, null, 0, docsTempTable, con);
+	
+	console.log('docTypesArray'+docTypesArray);	
+	console.log("query: " + q);
+	
+	request = new Request(q, function(err, rowCount) {
+		if (err) {
+			console.log(err);
+		} else {
+			executeMainSearchSP(connection);
+		}
+		//connection.close();
+	});
+	
+	if(q.length > 0){
+		connection.execSql(request);
+	} else {
+		executeMainSearchMapObjSP(connection);
+	}
+}
 /**
  * 
  * @param connection
@@ -127,7 +170,6 @@ function executeMainSearchMapObjSP( connection){
 	var countParam = 1;
 	if(pageNumber >= 2)
 		countParam = 1;
-	
 
 	var mainQuery = " exec V5_SearchForMapObjects  "+sessionId+","+mapObjectSearchDialogTable+", "+searchObject+", "+selectedMapObjsTempTableName;
 	mainQuery += " , "+selectedDocsTempTableName+" , 0, null, 0";
@@ -167,7 +209,7 @@ function executeMainSearchMapObjSP( connection){
 	  });
 	
 	request.on('row', function(columns) {
-		var doc = new Document(1);
+		var doc = new MapObject(1);
 		columns.forEach(function(column) {
 			 doc[column.metadata.colName] = column.value;
 		});
