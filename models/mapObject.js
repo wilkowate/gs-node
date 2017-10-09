@@ -145,7 +145,7 @@ function populateMapObjSPDlgTempTable( docTypesArray, connection){
 		if (err) {
 			console.log(err);
 		} else {
-			executeMainSearchSP(connection);
+			executeMainSearchMapObjSP(connection);
 		}
 		//connection.close();
 	});

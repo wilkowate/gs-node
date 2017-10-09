@@ -26,13 +26,13 @@ $( document ).ready(function() {
 		
 		mapObjsTbl.destroy();
 		
-		var header = "<tr><th>Doc_ID</th><th>Name</th>";
+		var header = "<tr><th>Object</th><th>Layer</th>";
 		var cols = [{ "data": "Object", "name": "Object" },
 	                 { "data": "Layer", "width":"30%" }
 	                 ];
 		
 		for(i = 0; i<d.length; i++){
-			col = {"data":"DT_"+d[i].columnName};
+			col = {"data":""+d[i].columnName};
 			cols.push(col);
 			header += "<th>"+d[i].columnName+"</th>";
 		}
