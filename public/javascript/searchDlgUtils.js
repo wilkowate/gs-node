@@ -97,6 +97,12 @@ function registerDocSearchDlgEvents(){
 	});
 }
 
+function registerMapSearchDlgEvents(){
+		$("#mapSearchDlg .mapLayersCombo").on('change',function () {
+			addNewTab("mapSearchDlg", $(this).val());
+		});
+	}
+
 function loadDocTypesCollection(dlgName, data){			
 	docTypesCollection = new Map();
 		
@@ -121,9 +127,9 @@ function loadMapLayersCollection(dlgName, data){
 	$.each(data.data, function(i, layer) {
 		var a = $.parseJSON(layer.value);
 		mapLayersCollection.set(dlgName+"_"+a[0].id,a);
-		if(a[0].id == 0){
-			addNewTab(dlgName, 0);
-		}
+		//if(a[0].id == 0){
+		//	addNewTab(dlgName, 0);
+		//}
 		$(".mapLayersCombo").append('<option value="'+a[0].id+'">'+a[0].tableName+'</option>');
 	});
 }
@@ -142,9 +148,7 @@ function addNewTab(dlgName, typeName) {
 
 
 function populateSearchTab(dlgName, a){			
-	//var a = $.parseJSON(layer.value);
-	//docTypesMap.set(a[0].tableName,a);
-	
+
 	var tabId = dlgName+"_"+a[0].id;
 	
 	var tabHeader = '<li><a data-toggle="tab" href="#'+tabId+'">';
@@ -180,7 +184,7 @@ function populateSearchTab(dlgName, a){
 		} else if(docType.type.startsWith('nvarchar')){
 			var inputTxt = '<p> '+docType.columnName+'(txt): <input value="" name="';
 			inputTxt += docType.id+"_"+docType.columnName+'"';
-			inputTxt += ' data-type="'+docType.type+'"';
+			inputTxt += ' data-type="text"';
 			inputTxt += ' data-columnName="'+docType.columnName+'"';
 			inputTxt += ' data-id="'+docType.id+'"';
 			inputTxt += ' data-sfOrder="0"';
@@ -207,19 +211,19 @@ function populateSearchTab(dlgName, a){
 		} else {
 			var inputTxt = '<p> '+docType.columnName+'(nr) From: <input size="4" value="" name="';
 			inputTxt += docType.id+"_"+docType.columnName+'"';
-			inputTxt += ' data-type="'+docType.type+'"';
+			inputTxt += ' data-type="INT"';
 			inputTxt += ' data-columnName="'+docType.columnName+'"';
 			inputTxt += ' data-id="'+docType.id+'"';
 			inputTxt += ' data-sfOrder="1"';
-			inputTxt += ' type="text"  >';
+			inputTxt += ' type="number"  >';
 			
 			inputTxt += ' To: <input size="4" value="" name="';
 			inputTxt += docType.id+"_"+docType.columnName+'"';
-			inputTxt += ' data-type="'+docType.type+'"';
+			inputTxt += ' data-type="INT"';
 			inputTxt += ' data-columnName="'+docType.columnName+'"';
 			inputTxt += ' data-id="'+docType.id+'"';
 			inputTxt += ' data-sfOrder="2"';
-			inputTxt += ' type="text"  ><br></p>';
+			inputTxt += ' type="number"  ><br></p>';
 			
 			$("#"+tabId).append(inputTxt);
 		}

@@ -7,6 +7,7 @@ var Request = require('tedious').Request;
 var TYPES = require('tedious').TYPES;
 
 var db = require('./database.js');
+var gsutils = require('./gsutils.js');
 
 var name = '';
 var layerName ='';
@@ -43,6 +44,13 @@ exports.get = function(search_params,iDisplayStart,iDisplayLength,sEcho, done) {
 	var connection = db.getConnection();
 	
 	console.log('!!!!!!!!!!!!!!!search_params: '+JSON.stringify(search_params));
+	
+	mapObjectSearchDialogTable = "null";
+	searchObject  = "null";
+	selectedMapObjsTempTableName = "null";
+	selectedDocsTempTableName = "null";
+	docsMore0 = 0;
+	layerId = 0;
 	
 	sortByColumn = "Object";
 	documentTypeId = 1;
@@ -95,7 +103,7 @@ function createMapObjSPDlgTempTable( connection){
 	var docTypesArray = searchParamsArray[0].MAP_SP_DLG_FIELDS;
 	//console.log('docTypesArray.length '+docTypesArray);
 	if(typeof docTypesArray !== "undefined" && docTypesArray.length > 0){
-		mapObjectSearchDialogTable = "wimapObjectSearchDialogTable";
+		mapObjectSearchDialogTable = gsutils.createTempTableName("wimaptemptable");
 		var sqlCreateTempTable = " if not exists (select * from sysobjects where name='"+mapObjectSearchDialogTable;
 		sqlCreateTempTable += "' ) CREATE TABLE [" + mapObjectSearchDialogTable;
 		sqlCreateTempTable += "] ( SearchSection nvarchar(256), "+ " SearchField nvarchar(max),";
@@ -130,7 +138,7 @@ function populateMapObjSPDlgTempTable( docTypesArray, connection){
 	for (var i = 0, len = docTypesArray.length; i < len; i++) {
 		obj = docTypesArray[i];
 		q += " INSERT INTO " + mapObjectSearchDialogTable + " (SearchSection ,SearchField,SearchFieldType,SearchValue,SearchFieldOrder) VALUES (" ;
-		q += obj.id + ",'"+obj.columnName+"','text','"+obj.value+"',0);";
+		q += obj.id + ",'"+obj.columnName+"','"+obj.type+"','"+obj.value+"',"+obj.sfOrder+");";
 	}
 	
 	

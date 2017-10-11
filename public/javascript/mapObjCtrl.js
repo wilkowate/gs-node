@@ -9,7 +9,7 @@ $( document ).ready(function() {
 		var parameters = { id:1 };
 		$.getJSON( '/docProcessor/loadMapTypes',parameters, function(data) {
 			loadMapLayersCollection("mapSearchDlg",data);
-			registerDocSearchDlgEvents();
+			registerMapSearchDlgEvents();
 			$("#mapSearchDlg .tabsPanel li:eq(1) a").tab('show');
 		});
 	});
@@ -40,7 +40,7 @@ $( document ).ready(function() {
 		$('#mapObjsTbl thead').html(""+header+"</tr>");
 
 		initMapObjsTable(cols);
-		//addNewTab("docSearchDlg", $(this).val());
+		addNewTab("mapSearchDlg", $(this).val());
 	});
 	 
 	$("#fireMapSearchBtn").on("click", function() {
