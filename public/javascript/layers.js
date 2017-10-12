@@ -76,7 +76,7 @@ $( document ).ready(function() {
 						    	  
 			    var vectorSource_wells = new ol.source.Vector({
 			    	loader: function(extent, resolution, projection) {
-			             var url = 'http://192.168.1.162:8080/geoserver/cite/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=cite:'+layer.geoServerLayerName+'&maxFeatures=60&outputFormat=text/javascript&format_options=callback:loadFeatures1';
+			             var url = GEOSERVER_HOST+'ows?service=WFS&version=1.0.0&request=GetFeature&typeName=cite:'+layer.geoServerLayerName+'&maxFeatures=60&outputFormat=text/javascript&format_options=callback:loadFeatures1';
 			             // use jsonp: false to prevent jQuery from adding the "callback" parameter to the URL
 			             $.ajax({url: url, dataType: 'jsonp', jsonp: false});
 			           },
@@ -88,7 +88,7 @@ $( document ).ready(function() {
 	       	    var wmsSource =  new ol.layer.Tile({
 	       	    	title: 'Global Imagery',
 	         	    source: new ol.source.TileWMS({
-	         	    url: 'http://192.168.1.162:8080/geoserver/cite/wms?service=WMS',
+	         	    url: GEOSERVER_HOST+'wms?service=WMS',
 	         	    params: {LAYERS: 'cite:'+layer.geoServerLayerName, VERSION: '1.1.0'}
 	         	          //params: {LAYERS: 'nasa:bluemarble', VERSION: '1.1.1'}
 	         	    })
